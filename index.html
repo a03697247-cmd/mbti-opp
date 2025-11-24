@@ -7,313 +7,334 @@
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600;700&family=Shippori+Mincho:wght@400;500;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;700&family=Shippori+Mincho:wght@400;500;700&display=swap" rel="stylesheet">
 
     <style>
         :root {
-            /* 高級感のあるベージュ×ゴールド */
-            --bg-color: #F9F8F4;
-            --text-main: #2C2825;
-            --text-sub: #8E8070;
-            --accent: #B89B5E; /* マットゴールド */
-            --accent-glow: #D4B875;
-            --bar-left: #8E7896; /* 紫（孤高・本能側） */
-            --bar-right: #5A8F7B; /* 緑（融合・理知側） */
-            --card-bg: #FFFFFF;
-            --shadow: 0 10px 40px rgba(184, 155, 94, 0.1);
+            /* シンガポール・ナイト・ネオン */
+            --bg-dark: #050510;
+            --neon-cyan: #00f2ea;
+            --neon-purple: #ff0080;
+            --neon-gold: #ffd700;
+            --glass-bg: rgba(20, 20, 35, 0.7);
+            --glass-border: 1px solid rgba(255, 255, 255, 0.1);
+            --text-main: #ffffff;
+            --text-sub: #b0b0cc;
+            
+            /* 7段階評価の色 */
+            --agree-color: #00f2ea; /* 左：そう思う（シアン） */
+            --disagree-color: #ff0080; /* 右：そう思わない（マゼンタ） */
         }
 
         * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
         body {
             font-family: 'Shippori Mincho', serif;
-            background-color: var(--bg-color);
+            background-color: var(--bg-dark);
             color: var(--text-main);
             margin: 0;
             padding: 0;
             min-height: 100vh;
             line-height: 1.8;
-            letter-spacing: 0.04em;
             overflow-x: hidden;
+            position: relative;
+        }
+
+        /* --- 流動的なネオン背景 (Fluid Background) --- */
+        .background-anim {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            z-index: -1;
+            background: var(--bg-dark);
+            overflow: hidden;
+        }
+        .blob {
+            position: absolute;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: move 20s infinite alternate;
+            border-radius: 50%;
+        }
+        .blob-1 {
+            top: -10%; left: -10%; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, var(--neon-purple), transparent 70%);
+            animation-duration: 25s;
+        }
+        .blob-2 {
+            bottom: -10%; right: -10%; width: 60vw; height: 60vw;
+            background: radial-gradient(circle, var(--neon-cyan), transparent 70%);
+            animation-duration: 30s;
+            animation-direction: alternate-reverse;
+        }
+        .blob-3 {
+            top: 40%; left: 40%; width: 40vw; height: 40vw;
+            background: radial-gradient(circle, #4b0082, transparent 70%); /* Deep Indigo */
+            animation-duration: 40s;
+        }
+
+        @keyframes move {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, -30px) scale(1.1); }
         }
 
         /* --- 共通コンポーネント --- */
         .container {
             width: 100%;
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
-            padding: 0 20px;
+            padding: 20px;
             position: relative;
+            z-index: 1;
         }
 
         .btn {
             display: block;
             width: 100%;
-            padding: 20px;
-            background: var(--text-main);
-            color: #fff;
-            border: none;
-            font-family: 'Cormorant Garamond', 'Shippori Mincho', serif;
-            font-size: 1.1rem;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            letter-spacing: 0.1em;
-            position: relative;
-            overflow: hidden;
-        }
-        .btn::after {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+            padding: 18px;
             background: rgba(255,255,255,0.1);
-            transform: translateX(-100%);
-            transition: transform 0.4s;
+            backdrop-filter: blur(10px);
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            font-family: 'Cinzel', serif;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            box-shadow: 0 0 15px rgba(0, 242, 234, 0.2);
         }
-        .btn:hover { background: var(--accent); transform: translateY(-2px); box-shadow: 0 10px 20px rgba(0,0,0,0.1); }
-        .btn:hover::after { transform: translateX(0); }
+        .btn:hover {
+            background: var(--neon-cyan);
+            color: #000;
+            box-shadow: 0 0 30px rgba(0, 242, 234, 0.6);
+        }
 
-        /* --- 1. トップページ (没入型LP) --- */
+        /* --- 1. トップページ (LP) --- */
         .hero-section {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
             text-align: center;
-            padding: 60px 20px;
-            opacity: 0;
-            animation: fadeIn 1.5s ease forwards;
+            padding: 80px 0 40px 0;
+            animation: fadeIn 1.5s ease;
         }
 
-        .hero-logo {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 3.5rem;
+        .hero-title {
+            font-family: 'Cinzel', serif;
+            font-size: 3rem;
             line-height: 1;
             margin-bottom: 20px;
-            color: var(--accent);
-            text-shadow: 0 0 30px rgba(184, 155, 94, 0.3);
+            background: linear-gradient(to right, #fff, var(--neon-cyan));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(0, 242, 234, 0.3);
         }
 
-        .hero-copy {
-            font-size: 1rem;
-            margin-bottom: 60px;
+        .hero-desc {
             color: var(--text-sub);
+            margin-bottom: 50px;
+            font-size: 0.95rem;
         }
 
-        .scroll-msg {
-            margin-top: 40px;
-            font-size: 0.8rem;
-            color: #aaa;
-            animation: bounce 2s infinite;
+        /* フローティング開始ボタン (追従) */
+        .sticky-btn-container {
+            position: fixed;
+            bottom: 30px;
+            left: 0; width: 100%;
+            display: flex;
+            justify-content: center;
+            z-index: 100;
+            pointer-events: none; /* エリア自体はクリック透過 */
         }
-        @keyframes bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(10px); } }
+        .sticky-btn {
+            pointer-events: auto;
+            background: #000;
+            border: 1px solid var(--neon-cyan);
+            color: var(--neon-cyan);
+            padding: 15px 40px;
+            font-family: 'Cinzel', serif;
+            font-weight: bold;
+            border-radius: 50px;
+            box-shadow: 0 0 20px rgba(0,242,234,0.4);
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .sticky-btn:hover { transform: scale(1.05); background: var(--neon-cyan); color: #000; }
 
-        /* --- 2. 診断画面 (グラデーション5段階) --- */
+        /* タイプ図鑑 (Grid) */
+        .catalog-section {
+            margin-top: 60px;
+            padding-bottom: 100px;
+        }
+        .section-header {
+            font-family: 'Cinzel', serif;
+            font-size: 1.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            color: var(--text-main);
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+            padding-bottom: 10px;
+        }
+
+        .type-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 15px;
+        }
+
+        .type-card {
+            background: var(--glass-bg);
+            border: var(--glass-border);
+            padding: 15px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            border-radius: 8px;
+        }
+        .type-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 15px rgba(0,242,234,0.2);
+        }
+        .card-icon { font-size: 2.5rem; margin-bottom: 10px; display: block; }
+        .card-name { font-size: 0.8rem; font-weight: bold; color: #fff; }
+
+        /* --- 2. 診断画面 (7段階) --- */
         .quiz-container {
-            min-height: 100vh;
+            min-height: 80vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
-            padding: 40px 20px;
         }
 
-        .progress-indicator {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.2rem;
-            color: var(--accent);
-            text-align: center;
-            margin-bottom: 30px;
-        }
-
-        .question-card {
-            background: var(--card-bg);
-            padding: 40px 20px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(0,0,0,0.03);
-            text-align: center;
+        .progress-bar {
+            width: 100%; height: 2px;
+            background: rgba(255,255,255,0.1);
             margin-bottom: 40px;
-            min-height: 200px;
+        }
+        .progress-fill {
+            height: 100%; background: var(--neon-cyan);
+            width: 0%; transition: width 0.3s;
+            box-shadow: 0 0 10px var(--neon-cyan);
+        }
+
+        .question-text {
+            font-size: 1.3rem;
+            text-align: center;
+            min-height: 100px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.3rem;
-            font-weight: 500;
+            margin-bottom: 40px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
         }
 
-        .options-scale {
+        /* 7段階 UI */
+        .scale-wrapper {
             display: flex;
-            justify-content: space-between;
+            justify-content: center;
             align-items: center;
-            margin-bottom: 10px;
-            padding: 0 10px;
+            gap: 8px; /* 間隔狭く */
+            margin-bottom: 20px;
         }
         
-        .scale-btn {
-            width: 50px; height: 50px;
+        .scale-circle {
             border-radius: 50%;
-            border: 2px solid #ddd;
+            border: 2px solid;
+            background: transparent;
             cursor: pointer;
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-            position: relative;
+            transition: all 0.2s;
         }
-        /* サイズ変化 */
-        .scale-btn:nth-child(1) { width: 55px; height: 55px; border-color: var(--bar-left); } /* 左大 */
-        .scale-btn:nth-child(2) { width: 45px; height: 45px; border-color: var(--bar-left); opacity: 0.7; }
-        .scale-btn:nth-child(3) { width: 35px; height: 35px; border-color: #ccc; }
-        .scale-btn:nth-child(4) { width: 45px; height: 45px; border-color: var(--bar-right); opacity: 0.7; }
-        .scale-btn:nth-child(5) { width: 55px; height: 55px; border-color: var(--bar-right); } /* 右大 */
-
-        .scale-btn:hover { transform: scale(1.15); }
-        .scale-btn:active { transform: scale(0.9); }
         
-        /* 押した時の色 */
-        .scale-btn:nth-child(1):hover { background: var(--bar-left); }
-        .scale-btn:nth-child(5):hover { background: var(--bar-right); }
+        /* 左3つ：そう思う (Agree) -> Cyan */
+        .c-agree-3 { width: 50px; height: 50px; border-color: var(--agree-color); }
+        .c-agree-2 { width: 40px; height: 40px; border-color: var(--agree-color); opacity: 0.8; }
+        .c-agree-1 { width: 30px; height: 30px; border-color: var(--agree-color); opacity: 0.6; }
+        
+        /* 真ん中 */
+        .c-neutral { width: 20px; height: 20px; border-color: #666; }
+
+        /* 右3つ：そう思わない (Disagree) -> Purple */
+        .c-disagree-1 { width: 30px; height: 30px; border-color: var(--disagree-color); opacity: 0.6; }
+        .c-disagree-2 { width: 40px; height: 40px; border-color: var(--disagree-color); opacity: 0.8; }
+        .c-disagree-3 { width: 50px; height: 50px; border-color: var(--disagree-color); }
+
+        /* Hover Effects */
+        .scale-circle:hover { transform: scale(1.2); }
+        .c-agree-3:hover, .c-agree-2:hover, .c-agree-1:hover { background: var(--agree-color); box-shadow: 0 0 15px var(--agree-color); }
+        .c-neutral:hover { background: #fff; }
+        .c-disagree-3:hover, .c-disagree-2:hover, .c-disagree-1:hover { background: var(--disagree-color); box-shadow: 0 0 15px var(--disagree-color); }
 
         .scale-labels {
             display: flex;
             justify-content: space-between;
-            font-size: 0.75rem;
-            color: var(--text-sub);
+            padding: 0 20px;
+            font-size: 0.8rem;
             font-weight: bold;
-            margin-bottom: 20px;
+            margin-bottom: 50px;
         }
-        .label-left { color: var(--bar-left); }
-        .label-right { color: var(--bar-right); }
-
 
         /* --- 3. 結果画面 --- */
-        .result-header {
+        .result-card {
+            background: var(--glass-bg);
+            border: var(--glass-border);
+            padding: 40px 20px;
+            border-radius: 16px;
             text-align: center;
-            padding: 60px 0 40px 0;
-            border-bottom: 1px solid rgba(0,0,0,0.05);
+            margin-bottom: 40px;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
         }
-        
-        .animal-icon {
-            font-size: 5rem;
-            margin-bottom: 20px;
-            filter: drop-shadow(0 10px 20px rgba(0,0,0,0.15));
-            animation: float 3s ease-in-out infinite;
-        }
-        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
-        .type-name {
-            font-size: 2.2rem;
-            font-weight: 700;
-            margin-bottom: 10px;
-            color: var(--text-main);
-        }
-        .type-catch {
-            font-size: 1rem;
-            color: var(--accent);
-            margin-bottom: 30px;
-            font-weight: bold;
-            letter-spacing: 0.1em;
-        }
+        .res-icon { font-size: 4rem; margin-bottom: 10px; display: inline-block; animation: float 3s infinite ease-in-out; }
+        .res-name { font-size: 2rem; font-weight: bold; margin-bottom: 10px; color: #fff; text-shadow: 0 0 10px rgba(255,255,255,0.5); }
+        .res-catch { font-size: 1rem; color: var(--neon-cyan); margin-bottom: 30px; letter-spacing: 0.1em; }
 
         /* 4軸バー (MBTI Style) */
-        .axis-container {
-            margin: 40px 0;
+        .axis-box { margin-bottom: 30px; }
+        .axis-row { margin-bottom: 20px; }
+        .axis-label {
+            display: flex; justify-content: space-between; font-size: 0.8rem; margin-bottom: 5px; color: #ccc;
+        }
+        .bar-bg {
+            width: 100%; height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; overflow: hidden; position: relative;
+        }
+        .bar-fill { height: 100%; position: absolute; top:0; transition: width 1s ease; }
+        .fill-L { right: 50%; background: var(--agree-color); border-radius: 4px 0 0 4px; box-shadow: 0 0 10px var(--agree-color); }
+        .fill-R { left: 50%; background: var(--disagree-color); border-radius: 0 4px 4px 0; box-shadow: 0 0 10px var(--disagree-color); }
+
+        /* マズロー分析リスト */
+        .maslow-list { text-align: left; list-style: none; padding: 0; margin-top: 30px; }
+        .maslow-item { margin-bottom: 20px; padding-left: 15px; border-left: 2px solid var(--neon-gold); }
+        .lvl-title { font-size: 0.75rem; color: var(--neon-gold); text-transform: uppercase; letter-spacing: 1px; }
+        .lvl-text { font-size: 0.9rem; margin-top: 5px; }
+
+        /* 相性・裏の顔・対策 */
+        .extra-box {
+            background: rgba(0,0,0,0.3);
+            border: 1px solid rgba(255,255,255,0.1);
             padding: 20px;
-            background: #fff;
-            box-shadow: var(--shadow);
-        }
-        .axis-row {
-            margin-bottom: 25px;
-        }
-        .axis-labels {
-            display: flex;
-            justify-content: space-between;
-            font-size: 0.9rem;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-        .axis-bar-bg {
-            width: 100%; height: 8px;
-            background: #eee;
-            border-radius: 4px;
-            position: relative;
-            overflow: hidden;
-        }
-        /* 中心から伸びるバー */
-        .axis-bar-fill {
-            height: 100%;
-            position: absolute;
-            top: 0;
-            transition: width 1s ease-out;
-        }
-        .fill-left { right: 50%; background: var(--bar-left); border-radius: 4px 0 0 4px; transform-origin: right; }
-        .fill-right { left: 50%; background: var(--bar-right); border-radius: 0 4px 4px 0; transform-origin: left; }
-
-        /* マズロー5段階 & その他セクション */
-        .section-title {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
-            text-align: center;
-            margin: 50px 0 30px 0;
-            color: var(--text-main);
-            position: relative;
-        }
-        .section-title::after {
-            content: ""; display: block; width: 40px; height: 1px; background: var(--accent); margin: 10px auto 0;
-        }
-
-        .maslow-list {
-            list-style: none;
-            padding: 0;
-        }
-        .maslow-item {
-            margin-bottom: 25px;
-            padding-left: 20px;
-            border-left: 3px solid var(--accent);
-        }
-        .maslow-level {
-            font-size: 0.8rem;
-            color: var(--accent);
-            font-weight: bold;
-            text-transform: uppercase;
-            font-family: 'Cormorant Garamond', serif;
-        }
-        .maslow-text { font-size: 0.95rem; font-weight: 500; }
-
-        .info-box {
-            background: #fff;
-            padding: 30px;
-            margin-bottom: 30px;
-            box-shadow: var(--shadow);
-            border: 1px solid rgba(0,0,0,0.02);
-            text-align: center;
-        }
-
-        .best-match {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .dark-side-box {
-            background: #2C2825;
-            color: #fff;
-            padding: 30px;
-            text-align: center;
-            margin-top: 40px;
-        }
-        .dark-title { color: var(--accent); font-family: 'Cormorant Garamond'; margin-bottom: 10px; }
-        .dark-text { font-size: 0.95rem; line-height: 1.8; }
-
-        .advice-box {
-            background: #F4F8F6;
-            border: 1px solid var(--bar-right);
-            color: #333;
-            padding: 30px;
             margin-top: 20px;
             text-align: left;
+            border-radius: 8px;
+        }
+        .box-title { font-family: 'Cinzel'; color: var(--text-sub); font-size: 0.9rem; margin-bottom: 10px; border-bottom: 1px solid #444; padding-bottom: 5px; }
+        
+        .dark-side { border-color: var(--neon-purple); background: rgba(255, 0, 128, 0.05); }
+        .dark-side .box-title { color: var(--neon-purple); border-color: var(--neon-purple); }
+
+        /* モーダル */
+        .modal {
+            display: none; position: fixed; top:0; left:0; width:100%; height:100%;
+            background: rgba(0,0,0,0.9); z-index: 999; overflow-y: auto;
+        }
+        .modal-content {
+            width: 100%; max-width: 600px; margin: 40px auto;
+            background: transparent;
+        }
+        .close-btn {
+            position: fixed; top: 20px; right: 20px; font-size: 2rem; color: #fff; cursor: pointer; z-index: 1000;
         }
 
-        /* ユーティリティ */
         .hidden { display: none; }
         .fade-in { animation: fadeIn 1s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
@@ -322,143 +343,134 @@
 </head>
 <body>
 
-<div id="home-screen" class="hero-section">
-    <div style="font-family:'Cormorant Garamond'; color:var(--accent); letter-spacing:0.2em; margin-bottom:20px;">THE LOVE HIERARCHY</div>
-    <div class="hero-logo">Love<br>Philosophy</div>
-    <p class="hero-copy">
+<div class="background-anim">
+    <div class="blob blob-1"></div>
+    <div class="blob blob-2"></div>
+    <div class="blob blob-3"></div>
+</div>
+
+<div id="home-screen" class="container hero-section">
+    <div style="font-family:'Cinzel'; color:var(--neon-gold); letter-spacing:0.3em; margin-bottom:20px; font-size:0.8rem;">THE LOVE HIERARCHY</div>
+    <h1 class="hero-title">Love<br>Philosophy</h1>
+    <p class="hero-desc">
         愛は「欠乏」か、それとも「成熟」か。<br>
         マズローの5段階欲求が暴く、<br>
         あなたの魂の精神年齢。
     </p>
-    <button class="btn" style="max-width:300px;" onclick="startQuiz()">診断を始める</button>
-    <div class="scroll-msg">Scroll for more</div>
+
+    <div class="sticky-btn-container">
+        <button class="sticky-btn" onclick="startQuiz()">START DIAGNOSIS</button>
+    </div>
+
+    <div class="catalog-section">
+        <div class="section-header">16 ARCHETYPES CATALOG</div>
+        <div class="type-grid" id="catalog-grid">
+            </div>
+    </div>
 </div>
 
-<div id="quiz-screen" class="quiz-container hidden">
-    <div class="progress-indicator">
-        Q. <span id="q-curr">1</span> / 40
-    </div>
-
-    <div class="question-card fade-in" id="q-card">
-        <div id="q-text">質問テキスト</div>
-    </div>
+<div id="quiz-screen" class="container quiz-container hidden">
+    <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
+    <div style="text-align:center; color:#666; font-size:0.8rem; margin-bottom:10px;">Q. <span id="q-curr">1</span> / 40</div>
+    
+    <div class="question-text fade-in" id="q-text">
+        </div>
 
     <div class="scale-labels">
-        <span class="label-left" id="label-l">同意しない</span>
-        <span class="label-right" id="label-r">同意する</span>
+        <span style="color:var(--agree-color)">そう思う</span>
+        <span style="color:var(--disagree-color)">そう思わない</span>
     </div>
-
-    <div class="options-scale">
-        <div class="scale-btn" onclick="answer(1)"></div>
-        <div class="scale-btn" onclick="answer(2)"></div>
-        <div class="scale-btn" onclick="answer(3)"></div>
-        <div class="scale-btn" onclick="answer(4)"></div>
-        <div class="scale-btn" onclick="answer(5)"></div>
+    <div class="scale-wrapper">
+        <div class="scale-circle c-agree-3" onclick="answer(3)"></div>
+        <div class="scale-circle c-agree-2" onclick="answer(2)"></div>
+        <div class="scale-circle c-agree-1" onclick="answer(1)"></div>
+        <div class="scale-circle c-neutral" onclick="answer(0)"></div>
+        <div class="scale-circle c-disagree-1" onclick="answer(-1)"></div>
+        <div class="scale-circle c-disagree-2" onclick="answer(-2)"></div>
+        <div class="scale-circle c-disagree-3" onclick="answer(-3)"></div>
     </div>
 </div>
 
 <div id="result-screen" class="container hidden">
-    <div class="result-header fade-in">
-        <div class="animal-icon" id="res-icon">🐱</div>
-        <div style="font-family:'Cormorant Garamond'; color:#888;">Mental Age: Lv.<span id="res-level">--</span></div>
-        <div class="type-name" id="res-name">TYPE NAME</div>
-        <div class="type-catch" id="res-catch">キャッチコピー</div>
-    </div>
+    <div class="result-card fade-in">
+        <div class="res-icon" id="res-icon"></div>
+        <div style="font-family:'Cinzel'; color:#888; margin-bottom:5px;">Mental Age: Lv.<span id="res-level"></span></div>
+        <div class="type-name" id="res-name"></div>
+        <div class="res-catch" id="res-catch"></div>
 
-    <div class="axis-container fade-in">
-        <div class="axis-row">
-            <div class="axis-labels">
-                <span style="color:var(--bar-left)">孤高 (Solitude)</span>
-                <span style="color:var(--bar-right)">融合 (Fusion)</span>
+        <div class="axis-box">
+            <div class="axis-row">
+                <div class="axis-label"><span>孤高 (Solitude)</span><span>融合 (Fusion)</span></div>
+                <div class="bar-bg"><div class="bar-fill" id="bar-1"></div></div>
             </div>
-            <div class="axis-bar-bg">
-                <div class="axis-bar-fill" id="bar-1"></div>
+            <div class="axis-row">
+                <div class="axis-label"><span>本能 (Instinct)</span><span>理知 (Reason)</span></div>
+                <div class="bar-bg"><div class="bar-fill" id="bar-2"></div></div>
+            </div>
+            <div class="axis-row">
+                <div class="axis-label"><span>受容 (Accept)</span><span>創造 (Create)</span></div>
+                <div class="bar-bg"><div class="bar-fill" id="bar-3"></div></div>
+            </div>
+            <div class="axis-row">
+                <div class="axis-label"><span>没入 (Immerse)</span><span>超越 (Detach)</span></div>
+                <div class="bar-bg"><div class="bar-fill" id="bar-4"></div></div>
             </div>
         </div>
-        <div class="axis-row">
-            <div class="axis-labels">
-                <span style="color:var(--bar-left)">本能 (Instinct)</span>
-                <span style="color:var(--bar-right)">理知 (Reason)</span>
-            </div>
-            <div class="axis-bar-bg">
-                <div class="axis-bar-fill" id="bar-2"></div>
-            </div>
+
+        <ul class="maslow-list" id="maslow-list"></ul>
+
+        <div class="extra-box">
+            <div class="box-title">BEST MATCH</div>
+            <div id="best-match" style="font-weight:bold; font-size:1.1rem;"></div>
+            <div id="match-desc" style="font-size:0.9rem; color:#ccc; margin-top:5px;"></div>
         </div>
-        <div class="axis-row">
-            <div class="axis-labels">
-                <span style="color:var(--bar-left)">受容 (Accept)</span>
-                <span style="color:var(--bar-right)">創造 (Create)</span>
-            </div>
-            <div class="axis-bar-bg">
-                <div class="axis-bar-fill" id="bar-3"></div>
-            </div>
+
+        <div class="extra-box dark-side">
+            <div class="box-title">DARK SIDE</div>
+            <div id="dark-text" style="font-size:0.95rem;"></div>
         </div>
-        <div class="axis-row">
-            <div class="axis-labels">
-                <span style="color:var(--bar-left)">没入 (Immerse)</span>
-                <span style="color:var(--bar-right)">超越 (Detach)</span>
-            </div>
-            <div class="axis-bar-bg">
-                <div class="axis-bar-fill" id="bar-4"></div>
-            </div>
+
+        <div class="extra-box">
+            <div class="box-title">ADVICE</div>
+            <div id="advice-text" style="font-size:0.95rem;"></div>
         </div>
-    </div>
 
-    <div class="section-title">Hierarchy Analysis</div>
-    <ul class="maslow-list" id="maslow-list">
-        </ul>
-
-    <div class="info-box">
-        <div style="font-family:'Cormorant Garamond'; color:var(--accent); margin-bottom:10px;">Best Match</div>
-        <div class="best-match" id="best-match">
-            </div>
-        <p id="match-desc" style="font-size:0.8rem; color:#666; margin-top:5px;"></p>
-    </div>
-
-    <div class="dark-side-box">
-        <div class="dark-title">Dark Side</div>
-        <div class="dark-text" id="dark-text">
-            </div>
-    </div>
-
-    <div class="advice-box">
-        <div style="font-weight:bold; color:var(--bar-right); margin-bottom:10px;">【今後の対策】</div>
-        <div id="advice-text" style="font-size:0.9rem;"></div>
-    </div>
-
-    <div style="margin: 40px 0; text-align: center;">
-        <button class="btn" onclick="location.reload()">トップに戻る</button>
+        <button class="btn" style="margin-top:30px;" onclick="location.reload()">トップに戻る</button>
     </div>
 </div>
 
+<div id="type-modal" class="modal">
+    <div class="close-btn" onclick="closeModal()">×</div>
+    <div class="modal-content" id="modal-body">
+        </div>
+</div>
+
 <script>
-    // --- データ: 16タイプ定義 ---
-    // ポップで可愛いアイコン × 高級感のある辛辣テキスト
-    const archetypes = {
-        // A:孤高, S:本能, R:受容, I:没入 -> ASRI
+    // --- データ: 16タイプ詳細 ---
+    const types = {
         "ASRI": {
             name: "気まぐれな黒猫", icon: "🐈‍⬛",
             catch: "誰にも飼い慣らせない、純粋な野生",
-            l1: "匂いと肌触りが全て。理屈抜きで惹かれた相手にだけ、無防備にお腹を見せる。",
+            l1: "匂いと直感だけが真実。理屈抜きで惹かれた相手にだけ、無防備にお腹を見せる。",
             l2: "最大の安全は「いつでも逃げ出せる」こと。束縛された瞬間、愛は恐怖に変わる。",
-            l3: "群れるのは嫌い。二人だけの秘密基地で、誰にも邪魔されずに丸くなっていたい。",
+            l3: "群れは不要。二人だけの秘密基地で、誰にも邪魔されずに丸くなっていたい。",
             l4: "「いい子だね」と頭を撫でられるより、「変わってるね」と面白がられたい。",
-            l5: "愛とは、互いに自由であること。所有し合わず、それでも寄り添う関係が理想。",
+            l5: "愛とは自由であること。所有し合わず、それでも魂が寄り添う関係。",
             best: "陽だまりのゴールデン (USRD)", matchDesc: "あなたの気まぐれを、笑って許してくれる唯一の存在。",
-            dark: "「自由」を盾にして、面倒な話し合いから逃げているだけでは？本当は傷つくのが怖いだけの臆病者。",
-            advice: "言葉で伝える努力を放棄しないこと。「察して」は甘えです。"
+            dark: "「自由」を盾に責任から逃げているだけ。本当は傷つくのが怖い臆病者。",
+            advice: "言葉で伝える努力を。「察して」はただの甘えです。"
         },
         "ASRD": {
             name: "旅する渡り鳥", icon: "🕊️",
             catch: "風のように愛し、風のように去る",
-            l1: "特定の場所に留まるのが苦手。新鮮な空気と景色がないと、窒息してしまう。",
-            l2: "所有物を減らすことが安心感に繋がる。パートナーも「荷物」になると重荷。",
+            l1: "特定の場所に留まるのが苦手。新鮮な空気と景色がないと窒息してしまう。",
+            l2: "所有物を減らすことが安心。パートナーも「荷物」になると重荷に感じる。",
             l3: "広く浅く、軽やかに。深すぎる関係は足枷になるので、適度な距離で愛でる。",
             l4: "誰かの特別になることより、誰のものでもない自分であることに誇りを持つ。",
-            l5: "愛は通過点。人生という長い旅路で、たまたま隣り合った奇跡を楽しむ。",
+            l5: "愛は通過点。人生という旅路で、たまたま隣り合った奇跡を楽しむ。",
             best: "聖域の白鳥 (UPRD)", matchDesc: "お互いに干渉せず、美しい距離感を保てる大人の関係。",
-            dark: "執着がないのではなく、責任を負う覚悟がないだけ。飽きっぽい自分を「自由人」と美化している。",
-            advice: "たまには「羽を休める」場所を作ること。帰る場所があるから、遠くへ飛べるのです。"
+            dark: "執着がないのではなく、覚悟がないだけ。飽きっぽさを「自由」と美化している。",
+            advice: "たまには羽を休める場所を作ること。帰る場所があるから遠くへ飛べる。"
         },
         "ASCI": {
             name: "夢見るユニコーン", icon: "🦄",
@@ -467,22 +479,22 @@
             l2: "自分の美学が守られることが安全。生活感やダサい現実に侵食されたくない。",
             l3: "理解者は少なくていい。選ばれた運命の相手とだけ、魔法のような時間を過ごす。",
             l4: "「普通」と言われるのが屈辱。唯一無二の存在として崇められたい。",
-            l5: "愛を使って、完璧な物語を完成させる。現実を理想で塗り替えるクリエイター。",
+            l5: "愛を使って物語を完成させる。現実を理想で塗り替えるクリエイター。",
             best: "情熱のパピヨン (USCI)", matchDesc: "二人で非日常のドラマを作り上げることができる。",
-            dark: "理想を押し付けすぎ。相手が生身の人間であることを忘れ、勝手に幻滅して被害者ぶる癖がある。",
-            advice: "相手の「欠点」こそを愛すること。完璧な人間など、この世に存在しません。"
+            dark: "理想を押し付けすぎ。相手を人間として見ておらず、勝手に幻滅して被害者ぶる。",
+            advice: "相手の「欠点」こそを愛すること。完璧な人間など存在しません。"
         },
         "ASCD": {
             name: "孤高の雪豹", icon: "🐆",
             catch: "静寂を愛する、美しき戦略家",
             l1: "研ぎ澄まされた感覚。ノイズを嫌い、静かで上質な空間でのみ心を開く。",
-            l2: "状況をコントロールできることが安心の条件。予想外のハプニングは敵。",
+            l2: "状況をコントロールできることが安心。予想外のハプニングは敵。",
             l3: "馴れ合いは不要。互いに独立し、背中を預けられる戦友のような絆を求める。",
             l4: "感情的にならず、スマートに問題を解決した時、自分に惚れ惚れする。",
-            l5: "高みを目指すためのパートナーシップ。二人で最強になるための戦略的同盟。",
+            l5: "高みを目指すための同盟。二人で最強になるための戦略的パートナーシップ。",
             best: "敏腕な羊飼い (USCD)", matchDesc: "互いに有能さを認め合い、効率よく成功を目指せる。",
-            dark: "相手を分析しすぎ。恋愛を「攻略」と勘違いしており、相手の心が見えていない冷血漢。",
-            advice: "時には計算を捨てて、無様に感情を乱すこと。それが「愛嬌」になります。"
+            dark: "相手を分析しすぎ。恋愛を「攻略」と勘違いしている冷血漢。",
+            advice: "時には計算を捨てて、無様に乱れること。それが愛嬌になります。"
         },
         "APRI": {
             name: "書斎のフクロウ", icon: "🦉",
@@ -491,59 +503,58 @@
             l2: "約束が守られることが絶対条件。嘘や裏切りは、命に関わる脅威。",
             l3: "言葉数は少なくとも、深い信頼で繋がっていたい。沈黙が心地よい関係。",
             l4: "派手な評価はいらない。「あなたがいてくれてよかった」その一言で報われる。",
-            l5: "愛とは維持すること。変わらない日々を積み重ねることに、真理を見出す。",
+            l5: "愛とは維持すること。変わらない日々を積み重ねることに真理を見出す。",
             best: "王家のサラブレッド (UPRI)", matchDesc: "誠実さのベクトルが同じ。裏切りのない穏やかな日々。",
-            dark: "頑固すぎて面白みがない。「正しさ」で相手を追い詰め、息苦しくさせていることに気づいていない。",
-            advice: "正論は時に凶器になります。正しいことより、優しいことを選びましょう。"
+            dark: "頑固で面白みがない。「正しさ」で相手を追い詰め、息苦しくさせている。",
+            advice: "正論は時に凶器。正しいことより、優しいことを選びましょう。"
         },
         "APRD": {
             name: "深海のクジラ", icon: "🐋",
             catch: "全てを受け流す、悠久の哲学",
             l1: "外部の刺激に動じない。深く静かな環境で、ゆったりと泳いでいたい。",
-            l2: "何が起きても動じないメンタルが武器。トラブルさえも波の一部と捉える。",
+            l2: "何が起きても動じないメンタルが武器。トラブルさえも波の一部。",
             l3: "干渉せず、干渉されず。互いの存在を感じながら、別の道を泳ぐ心地よさ。",
             l4: "他者からの評価を超越している。自分が自分であることを、静かに誇る。",
-            l5: "愛とは手放すこと。執着を捨て、ただそこに在ることを肯定する悟りの境地。",
+            l5: "愛とは手放すこと。執着を捨て、ただそこに在ることを肯定する悟り。",
             best: "旅する渡り鳥 (ASRD)", matchDesc: "互いに束縛せず、自由な魂のまま共鳴できる。",
-            dark: "諦めが早すぎる。争いを避けるために、大切な話し合いからも逃げている事なかれ主義。",
-            advice: "「なんでもいいよ」は優しさではなく無関心です。自分の意志を示してください。"
+            dark: "諦めが早すぎる。争いを避けるため、大切な話し合いからも逃げている事なかれ主義。",
+            advice: "「なんでもいい」は無関心と同じ。自分の意志を示してください。"
         },
         "APCI": {
             name: "摩天楼のタカ", icon: "🦅",
             catch: "頂点を目指す、孤独な王",
-            l1: "質の高いものしか受け付けない。安っぽい愛や環境は、プライドが許さない。",
+            l1: "質の高いものしか受け付けない。安っぽい愛や環境はプライドが許さない。",
             l2: "自分が主導権を握ることが安全。誰かに操縦されることは死を意味する。",
-            l3: "弱音は吐かない。弱さを見せず、常に完璧な姿で相手を魅了したい。",
+            l3: "弱音は吐かない。常に完璧な姿で相手を魅了し続けたい。",
             l4: "尊敬されることが愛されること。「すごい人」であり続ける努力を惜しまない。",
             l5: "愛は征服と構築。二人で帝国を築き、見たことのない景色を独占する。",
             best: "革命のペガサス (UPCI)", matchDesc: "視座の高さが合う。二人なら世界だって変えられる。",
-            dark: "相手をアクセサリー扱いしている。「トロフィーワイフ/ハズバンド」を求めているだけのエゴイスト。",
-            advice: "弱さを見せることは、強さの証です。鎧を脱いで、パートナーに甘えてみて。"
+            dark: "相手をアクセサリー扱いしている。「トロフィー」を求めているだけのエゴイスト。",
+            advice: "弱さを見せることは強さの証。鎧を脱いでパートナーに甘えて。"
         },
         "APCD": {
             name: "荒野のオオカミ", icon: "🐺",
             catch: "完成された個、揺るぎない信念",
             l1: "孤独こそが癒やし。他者の体温は、時としてノイズになる。",
-            l2: "自分の信念を曲げないことが安全。同調圧力には決して屈しない。",
+            l2: "信念を曲げないことが安全。同調圧力には決して屈しない。",
             l3: "群れは作らないが、選んだ唯一のパートナーには生涯の忠誠を誓う。",
             l4: "媚びない生き様そのものがステータス。孤高であることに酔いしれる。",
             l5: "自己完結した二つの魂が、交わらずとも並走する。究極の大人の愛。",
-            best: "伝説のフェニックス (UPCD)", matchDesc: "互いに自立しており、依存のない高潔な関係を築ける。",
-            dark: "可愛げがなさすぎる。一人で生きていけそうと思われすぎて、誰も手を差し伸べてくれない。",
-            advice: "「助けて」と言えるようになりましょう。それは相手への信頼の証です。"
+            best: "伝説のフェニックス (UPCD)", matchDesc: "互いに自立しており、依存のない高潔な関係。",
+            dark: "可愛げがなさすぎる。一人で生きていけそうと思われすぎて、誰も手を差し伸べない。",
+            advice: "「助けて」と言えるように。それは相手への信頼の証です。"
         },
-        
         "USRI": {
             name: "恋するウサギ", icon: "🐇",
             catch: "寂しいと死んじゃう、愛の信者",
-            l1: "スキンシップが生命線。常に触れていないと、不安で震えてしまう。",
-            l2: "「ずっと一緒」という言葉だけが精神安定剤。既読スルーは緊急事態。",
+            l1: "スキンシップが生命線。常に触れていないと不安で震えてしまう。",
+            l2: "「ずっと一緒」の言葉だけが精神安定剤。既読スルーは緊急事態。",
             l3: "あなた色に染まりたい。境界線を溶かして、一心同体になりたい。",
             l4: "「可愛いね」「好きだよ」と無限に言われたい。愛の言葉はシャワーのように。",
             l5: "愛に溺れ、愛に生きる。理性を捨てて本能のままに融合する快楽。",
             best: "献身的な執事 (UPRI)", matchDesc: "あなたのワガママを、全て受け止めてくれる保護者。",
-            dark: "依存心が強すぎて重い。相手の時間を搾取する吸血鬼（ヴァンパイア）になっている。",
-            advice: "一人の時間を楽しめる趣味を見つけて。自立したウサギは最強にモテます。"
+            dark: "依存心が強すぎて重い。相手の時間を搾取する吸血鬼になっている。",
+            advice: "一人の時間を楽しめる趣味を。自立したウサギは最強にモテます。"
         },
         "USRD": {
             name: "陽だまりのゴールデン", icon: "🦮",
@@ -552,21 +563,21 @@
             l2: "平和が一番。争いごとは避け、ニコニコしていれば世界は回る。",
             l3: "みんな仲良く。パートナーの友達や家族とも、すぐに仲良くなれる天才。",
             l4: "尻尾を振って尽くすことで、頭を撫でてもらいたい。奉仕が喜び。",
-            l5: "ただそこにいるだけで、周りを幸せにする。愛そのものになった存在。",
+            l5: "ただそこにいるだけで周りを幸せにする。愛そのものになった存在。",
             best: "気まぐれな黒猫 (ASRI)", matchDesc: "猫のツンデレすらも、「可愛い」と包み込める包容力。",
             dark: "八方美人で主体性がない。「いい人」止まりで、都合よく扱われがち。",
-            advice: "嫌なことは「NO」と言うこと。怒ってもあなたの価値は下がりません。"
+            advice: "嫌なことは「NO」と言うこと。怒っても価値は下がりません。"
         },
         "USCI": {
             name: "情熱のパピヨン", icon: "🦋",
             catch: "愛の力で、日常をドラマに変える",
             l1: "華やかで刺激的なことが大好き。地味で退屈な毎日は耐えられない。",
-            l2: "変化し続けることが安全。マンネリ化すると、別の花へ飛んでいきたくなる。",
+            l2: "変化し続けることが安全。マンネリ化すると別の花へ飛んでいきたくなる。",
             l3: "二人で何かしよう！イベント、旅行、サプライズ。思い出作りが使命。",
             l4: "「君といると飽きない」が最高の褒め言葉。エンターテイナーでありたい。",
             l5: "愛は祭り。エネルギーを燃やし尽くし、世界を鮮やかに彩る。",
             best: "夢見るユニコーン (ASCI)", matchDesc: "妄想を現実に変える行動力で、最高のパートナーになれる。",
-            dark: "熱しやすく冷めやすい。盛り上がっているのは自分だけで、相手は疲弊しているかも。",
+            dark: "熱しやすく冷めやすい。盛り上がっているのは自分だけで、相手は疲弊している。",
             advice: "日常の些細な幸せに目を向けて。祭りの後の静寂も愛せるように。"
         },
         "USCD": {
@@ -577,9 +588,9 @@
             l3: "私が育てた。パートナーの成長や成功を、自分のことのように喜ぶ。",
             l4: "頼られることに快感を覚える。「あなたがいないとダメ」と言われたい。",
             l5: "愛は育成ゲーム。相手のポテンシャルを最大化するプロデューサー。",
-            best: "孤高の雪豹 (ASCD)", matchDesc: "有能な相手をさらに輝かせることができる、最強のタッグ。",
-            dark: "お節介が過ぎる。「あなたのため」と言いながら、自分の理想を押し付けている支配者。",
-            advice: "相手の失敗を見守るのも愛です。手出し口出しを我慢する修行を。"
+            best: "孤高の雪豹 (ASCD)", matchDesc: "有能な相手をさらに輝かせることができる最強のタッグ。",
+            dark: "お節介が過ぎる。「あなたのため」と言いながら理想を押し付けている。",
+            advice: "相手の失敗を見守るのも愛。手出し口出しを我慢する修行を。"
         },
         "UPRI": {
             name: "王家のサラブレッド", icon: "🐎",
@@ -590,20 +601,20 @@
             l4: "「信頼できる」という評価が誇り。裏切るくらいなら自害する。",
             l5: "愛とは契約の履行。健やかなる時も病める時も、誓いを守り抜く美学。",
             best: "書斎のフクロウ (APRI)", matchDesc: "お互いに誠実で、約束を破らない安心感がある。",
-            dark: "融通が利かない。相手のミスを許せず、正論で追い詰めるモラハラ気質が潜む。",
-            advice: "「ま、いっか」を口癖に。完璧主義を捨てれば、もっと愛されます。"
+            dark: "融通が利かない。相手のミスを許せず、正論で追い詰めるモラハラ気質。",
+            advice: "「ま、いっか」を口癖に。完璧主義を捨てればもっと愛されます。"
         },
         "UPRD": {
             name: "聖域の白鳥", icon: "🦢",
             catch: "汚れなき愛、究極の癒やし",
-            l1: "清潔感と静寂。荒々しい感情や争いからは、距離を置きたい。",
-            l2: "誰も傷つかない世界。自分が我慢して丸く収まるなら、それでいい。",
+            l1: "清潔感と静寂。荒々しい感情や争いからは距離を置きたい。",
+            l2: "誰も傷つかない世界。自分が我慢して丸く収まるならそれでいい。",
             l3: "言葉にしなくても通じ合う、魂の共鳴。スピリチュアルな繋がり。",
             l4: "感謝されるより、癒やせたことに満足する。見返りを求めない聖人。",
-            l5: "愛は浄化。そばにいるだけで相手の心が洗われる、パワースポット。",
+            l5: "愛は浄化。そばにいるだけで相手の心が洗われるパワースポット。",
             best: "旅する渡り鳥 (ASRD)", matchDesc: "縛られたくない鳥と、待つのが得意な白鳥。静かな愛。",
-            dark: "現実逃避のプロ。問題から目を背け、綺麗な部分だけを見ようとする事なかれ主義。",
-            advice: "泥臭い現実に向き合う勇気を。時には泥にまみれる愛も美しいですよ。"
+            dark: "現実逃避のプロ。問題から目を背け、綺麗な部分だけを見ようとする。",
+            advice: "泥臭い現実に向き合う勇気を。泥にまみれる愛も美しいです。"
         },
         "UPCI": {
             name: "革命のペガサス", icon: "🎠",
@@ -614,77 +625,92 @@
             l4: "「私たちならできる」という全能感。二人だけの世界に酔いしれる。",
             l5: "愛による世界征服。二人の絆が、周囲や社会を変える力になる。",
             best: "摩天楼のタカ (APCI)", matchDesc: "野心が共鳴する。二人でなら、どんな高い壁も越えられる。",
-            dark: "相手への要求水準が高すぎる。ついてこれない相手を冷酷に切り捨てる独裁者。",
-            advice: "相手の歩幅に合わせる優しさを。一人で空を飛んでも寂しいだけです。"
+            dark: "相手への要求水準が高すぎる。ついてこれない相手を冷酷に切り捨てる。",
+            advice: "相手の歩幅に合わせる優しさを。一人で空を飛んでも寂しいだけ。"
         },
         "UPCD": {
             name: "伝説のフェニックス", icon: "🔥",
             catch: "時空を超えた、愛の最終形態",
             l1: "生死を超越したエネルギー。肉体的な距離など問題ではない。",
             l2: "揺るがない自己と他者。何が起きても壊れない絶対的な信頼。",
-            l3: "融合しながらも自立している。矛盾を内包した、奇跡のバランス。",
+            l3: "融合しながらも自立している。矛盾を内包した奇跡のバランス。",
             l4: "承認など不要。ただ愛し、愛されることの喜びを知っている。",
             l5: "自己実現を超えた自己超越。マズローの頂点に立つ、神に近い愛。",
             best: "荒野のオオカミ (APCD)", matchDesc: "完成された魂同士の、言葉を超えた響き合い。",
-            dark: "達観しすぎて人間味がない。「神様」すぎて、相手は息が詰まっているかも。",
+            dark: "達観しすぎて人間味がない。「神様」すぎて相手は息が詰まる。",
             advice: "たまにはダサい嫉妬や、見苦しい執着を見せて。人間界に降りてきて。"
         }
     };
 
-    // 質問データ (40問)
+    // 質問データ (断定型に書き換え済み)
+    // 左(Agree): +2/+1 to Left, 右(Disagree): +1/+2 to Right
     const questions = [
-        // 軸1: 距離感 (A:孤高 vs U:融合)
-        { t: "映画を見終わった直後の気持ちは？", axis: 1, left: "一人で余韻に浸りたい", right: "すぐに感想を語り合いたい" },
-        { t: "誰にも言えない小さな成功をした時。", axis: 1, left: "一人で噛み締めれば十分", right: "誰かに褒められたい" },
-        { t: "自分の深いトラウマについて。", axis: 1, left: "理解されるのは不可能だ", right: "全て理解し合いたい" },
-        { t: "連絡が丸一日途絶えた時。", axis: 1, left: "便りがないのは元気な証拠", right: "スタンプ一つは欲しい" },
-        { t: "相手が理由もなく不機嫌な時。", axis: 1, left: "そっとしておく", right: "「どうしたの？」と聞く" },
-        { t: "沈黙が続いた時。", axis: 1, left: "全く気にならず平気だ", right: "何か話さなきゃと気まずい" },
-        { t: "大きな悩みを抱えた時。", axis: 1, left: "自分の中で答えを出したい", right: "すぐに誰かに話したい" },
-        { t: "将来の話をする時の主語。", axis: 1, left: "「私は」こうしたい", right: "「私たちは」こうなる" },
-        { t: "自分の部屋に恋人の私物が増えること。", axis: 1, left: "あまり浸食されたくない", right: "二人の色に染まるのが嬉しい" },
-        { t: "相手が不機嫌だと自分も落ち込む？", axis: 1, left: "自分は自分と切り離せる", right: "ダイレクトに影響を受ける" },
-        // 軸2: 行動原理 (S:本能 vs P:理知)
-        { t: "店選びの基準は？", axis: 2, left: "店構えや直感", right: "レビュー点数やコスパ" },
-        { t: "気分の乗らないデートの約束。", axis: 2, left: "正直に伝えてリスケする", right: "約束だから気合で行く" },
-        { t: "高価な買い物。", axis: 2, left: "一目惚れしたら買う", right: "予算や頻度を計算する" },
-        { t: "議論での「納得」とは？", axis: 2, left: "誠意や愛を感じたい", right: "論理的な正しさが欲しい" },
-        { t: "長続きに必要なのは？", axis: 2, left: "生理的なときめき", right: "添い遂げる意志と覚悟" },
-        { t: "誰もいない深夜の赤信号。", axis: 2, left: "渡ってしまう", right: "青になるまで待つ" },
-        { t: "過去の「ずっと好き」という言葉。", axis: 2, left: "あの時は本気だった", right: "責任を持って維持すべき" },
-        { t: "仕事中に「寂しい」とLINEが来たら？", axis: 2, left: "トイレでこっそり即レス", right: "終わってから返す" },
-        { t: "服選びの基準。", axis: 2, left: "今これを着たい気分", right: "TPOや相手への配慮" },
-        { t: "優しい嘘はあり？", axis: 2, left: "バレなきゃあり", right: "なし。誠実であるべき" },
-        // 軸3: 現実認識 (R:受容 vs C:創造)
-        { t: "古びた廃墟を見た時。", axis: 3, left: "歴史を感じて美しい", right: "改装したら良い店になりそう" },
-        { t: "恋人の服がダサかったら。", axis: 3, left: "それも味だと受け入れる", right: "一緒に買いに行って改造する" },
-        { t: "相手の仕事の愚痴。", axis: 3, left: "ひたすら共感して聞く", right: "解決策を探る" },
-        { t: "レシピ通りの料理。", axis: 3, left: "基本に忠実に楽しむ", right: "自分好みにアレンジしたい" },
-        { t: "トラブルが起きた時。", axis: 3, left: "時が解決するのを待つ", right: "これを機にルールを見直す" },
-        { t: "好みの色じゃないプレゼント。", axis: 3, left: "気持ちだけで100点だ", right: "次は一緒に選びたいと言う" },
-        { t: "旅行に行くなら？", axis: 3, left: "手付かずの大自然", right: "整備されたリゾートや都市" },
-        { t: "恋人への理想。", axis: 3, left: "今のままでいてほしい", right: "もっと成長してほしい" },
-        { t: "別れ話になったら。", axis: 3, left: "運命と受け入れ身を引く", right: "原因を話し合い次に活かす" },
-        { t: "歪んだ形の陶器。", axis: 3, left: "歪みにこそ味がある", right: "綺麗な円形の方が美しい" },
-        // 軸4: 世界観 (I:没入 vs D:超越)
-        { t: "デート中にゲリラ豪雨。", axis: 4, left: "最悪！テンション下がる", right: "なんか笑えてきた" },
-        { t: "感動的な映画。", axis: 4, left: "役になりきって号泣する", right: "脚本や演出を分析して見る" },
-        { t: "激しい喧嘩中。", axis: 4, left: "頭に血が上ってしまう", right: "どこか冷めた自分がいる" },
-        { t: "過去の黒歴史。", axis: 4, left: "叫びたいくらい恥ずかしい", right: "他人事のように思う" },
-        { t: "フラッシュモブをされたら。", axis: 4, left: "主役気分で感激する", right: "周りの目が気になり恥ずかしい" },
-        { t: "恋に落ちると？", axis: 4, left: "仕事も手につかなくなる", right: "生活リズムは崩さない" },
-        { t: "注射の痛み。", axis: 4, left: "怖い、痛い", right: "痛みを観察してやり過ごす" },
-        { t: "「君のためなら死ねる」。", axis: 4, left: "素敵。愛されたい", right: "実際に死なれたら困る" },
-        { t: "ハロウィンの仮装。", axis: 4, left: "全力で楽しむ", right: "見る専でいい" },
-        { t: "人生とは？", axis: 4, left: "一度きりのドラマ", right: "暇つぶしか、長い旅" }
+        // 軸1: 孤高(A) vs 融合(U)
+        { t: "映画を見終わった直後は、誰かと話すよりも一人で余韻に浸りたい。", axis: 1 },
+        { t: "個人的な成功は、誰にも言わず自分だけで噛み締めれば十分だ。", axis: 1 },
+        { t: "どんなに愛していても、自分の全てを理解されることは不可能だと思う。", axis: 1 },
+        { t: "恋人からの連絡が一日なくても、全く不安にならない。", axis: 1 },
+        { t: "相手が不機嫌な時は、声をかけずにそっとしておくのが正解だ。", axis: 1 },
+        { t: "二人でいる時の沈黙は、全く気にならない。", axis: 1 },
+        { t: "悩みがある時は、他人に相談するより自分で答えを出したい。", axis: 1 },
+        { t: "将来を考える時、「私たちは」ではなく「私は」を主語にする。", axis: 1 },
+        { t: "自分の部屋に恋人の私物が増えるのは、あまり好きではない。", axis: 1 },
+        { t: "相手の機嫌が悪くても、自分の気分には影響しない。", axis: 1 },
+
+        // 軸2: 本能(S) vs 理知(P)
+        { t: "店を選ぶ時は、レビューを見るよりも自分の直感を信じる。", axis: 2 },
+        { t: "気分の乗らないデートは、約束していてもリスケしたい。", axis: 2 },
+        { t: "高価な買い物でも、一目惚れしたら後先考えずに買う。", axis: 2 },
+        { t: "議論では、論理的な正しさよりも「誠意」や「愛」を重視する。", axis: 2 },
+        { t: "長続きに必要なのは、覚悟よりも「生理的なときめき」だと思う。", axis: 2 },
+        { t: "深夜の赤信号なら、誰もいなければ渡ってしまう。", axis: 2 },
+        { t: "過去に誓った愛の言葉も、気持ちが冷めたら無効だと思う。", axis: 2 },
+        { t: "仕事中でも、恋人から寂しいと連絡が来たら返信してしまう。", axis: 2 },
+        { t: "服を選ぶ基準は、TPOよりも「今これを着たい気分」だ。", axis: 2 },
+        { t: "相手を傷つけないためなら、嘘をついても良いと思う。", axis: 2 },
+
+        // 軸3: 受容(R) vs 創造(C)
+        { t: "古びた建物を見た時、改装するよりもそのままの姿を愛でたい。", axis: 3 },
+        { t: "恋人の服がダサくても、それも味だと思って受け入れる。", axis: 3 },
+        { t: "愚痴を聞く時は、解決策よりも共感を示すことに徹する。", axis: 3 },
+        { t: "料理はアレンジするよりも、レシピ通りに作るのが好きだ。", axis: 3 },
+        { t: "トラブルが起きても、無理に動かず時が解決するのを待つ。", axis: 3 },
+        { t: "プレゼントが好みでなくても、気持ちだけで100点満点だ。", axis: 3 },
+        { t: "旅行に行くなら、都市よりも不便な大自然に行きたい。", axis: 3 },
+        { t: "恋人には成長してほしいというより、今のままでいてほしい。", axis: 3 },
+        { t: "別れ話になったら、足掻かずに運命だと受け入れる。", axis: 3 },
+        { t: "歪んだ陶器には、整ったものより美しい価値があると思う。", axis: 3 },
+
+        // 軸4: 没入(I) vs 超越(D)
+        { t: "デート中に雨に降られたら、笑い話にするよりテンションが下がる。", axis: 4 },
+        { t: "感動的な映画を見ると、分析するより役になりきって号泣する。", axis: 4 },
+        { t: "喧嘩をすると、冷静でいられず頭に血が上ってしまう。", axis: 4 },
+        { t: "過去の恥ずかしい失敗を思い出すと、叫び出したくなる。", axis: 4 },
+        { t: "フラッシュモブをされたら、恥ずかしさより感動が勝つ。", axis: 4 },
+        { t: "恋に落ちると、仕事や生活リズムが崩れてしまう。", axis: 4 },
+        { t: "注射や痛みに対して、客観視できずただただ怖い。", axis: 4 },
+        { t: "「君のためなら死ねる」と言われたら、重いと思わず感動する。", axis: 4 },
+        { t: "ハロウィンなどのイベントは、見るより全力で参加して楽しむ。", axis: 4 },
+        { t: "人生とは「暇つぶし」ではなく、「ドラマチックな物語」だ。", axis: 4 }
     ];
 
     let currentQ = 0;
     let scores = { 1:{L:0, R:0}, 2:{L:0, R:0}, 3:{L:0, R:0}, 4:{L:0, R:0} };
 
-    // 画面遷移
+    // --- 初期化: カタログ生成 ---
+    window.onload = function() {
+        const grid = document.getElementById('catalog-grid');
+        Object.keys(types).forEach(key => {
+            const div = document.createElement('div');
+            div.className = 'type-card';
+            div.innerHTML = `<span class="card-icon">${types[key].icon}</span><span class="card-name">${types[key].name}</span>`;
+            div.onclick = () => openResultModal(key);
+            grid.appendChild(div);
+        });
+    };
+
     function startQuiz() {
-        document.getElementById('home-screen').classList.add('hidden');
+        document.getElementById('home-screen').style.display = 'none';
         document.getElementById('quiz-screen').classList.remove('hidden');
         // シャッフル
         for (let i = questions.length - 1; i > 0; i--) {
@@ -698,18 +724,15 @@
         const q = questions[currentQ];
         document.getElementById('q-text').textContent = q.t;
         document.getElementById('q-curr').textContent = currentQ + 1;
-        document.getElementById('label-l').textContent = q.left;
-        document.getElementById('label-r').textContent = q.right;
+        document.getElementById('progress-fill').style.width = `${(currentQ / questions.length) * 100}%`;
     }
 
-    // 回答 (1:左強 ... 5:右強)
+    // 回答: 3, 2, 1, 0, -1, -2, -3
     function answer(val) {
         const axis = questions[currentQ].axis;
-        if(val === 1) scores[axis].L += 2;
-        if(val === 2) scores[axis].L += 1;
-        if(val === 4) scores[axis].R += 1;
-        if(val === 5) scores[axis].R += 2;
-
+        if (val > 0) scores[axis].L += val; // 左側(Agree)に加点
+        if (val < 0) scores[axis].R += Math.abs(val); // 右側(Disagree)に加点
+        
         currentQ++;
         if (currentQ < questions.length) {
             showQ();
@@ -721,7 +744,7 @@
     function showResult() {
         document.getElementById('quiz-screen').classList.add('hidden');
         document.getElementById('result-screen').classList.remove('hidden');
-
+        
         // タイプ判定
         let typeKey = "";
         typeKey += (scores[1].L >= scores[1].R) ? "A" : "U";
@@ -729,65 +752,100 @@
         typeKey += (scores[3].L >= scores[3].R) ? "R" : "C";
         typeKey += (scores[4].L >= scores[4].R) ? "I" : "D";
 
-        // 精神年齢計算
-        let raw = 0;
-        for(let k=1; k<=4; k++) raw += Math.max(scores[k].L, scores[k].R);
-        let bonus = 0;
-        if(scores[1].L > scores[1].R) bonus += 5; 
-        if(scores[2].R > scores[2].L) bonus += 5; 
-        if(scores[3].L > scores[3].R) bonus += 5; 
-        if(scores[4].R > scores[4].L) bonus += 5; 
-        let age = Math.floor( ((raw + bonus) / 140) * 100 );
-        if(age < 5) age = 5;
-
-        // 表示反映
-        const res = archetypes[typeKey];
-        document.getElementById('res-icon').textContent = res.icon;
-        document.getElementById('res-name').textContent = res.name;
-        document.getElementById('res-catch').textContent = res.catch;
-        document.getElementById('res-level').textContent = age;
-
-        // バーチャート更新
-        updateBar(1, scores[1].L, scores[1].R);
-        updateBar(2, scores[2].L, scores[2].R);
-        updateBar(3, scores[3].L, scores[3].R);
-        updateBar(4, scores[4].L, scores[4].R);
-
-        // マズローリスト生成
-        const list = document.getElementById('maslow-list');
-        list.innerHTML = `
-            <li class="maslow-item"><div class="maslow-level">Lv.1 Physiological</div><div class="maslow-text">${res.l1}</div></li>
-            <li class="maslow-item"><div class="maslow-level">Lv.2 Safety</div><div class="maslow-text">${res.l2}</div></li>
-            <li class="maslow-item"><div class="maslow-level">Lv.3 Social</div><div class="maslow-text">${res.l3}</div></li>
-            <li class="maslow-item"><div class="maslow-level">Lv.4 Esteem</div><div class="maslow-text">${res.l4}</div></li>
-            <li class="maslow-item"><div class="maslow-level">Lv.5 Self-Actualization</div><div class="maslow-text">${res.l5}</div></li>
-        `;
-
-        // その他情報
-        document.getElementById('best-match').innerHTML = `${archetypes[typeKey].best.slice(-6)} ${archetypes[typeKey].best.slice(0,-7)}`; // アイコンと名前を分離して表示も可能だが簡易的に
-        document.getElementById('match-desc').textContent = res.matchDesc;
-        document.getElementById('dark-text').textContent = res.dark;
-        document.getElementById('advice-text').textContent = res.advice;
+        renderResult(typeKey, "result-screen");
     }
 
-    function updateBar(axis, leftScore, rightScore) {
-        // バーの長さ計算 (中心から)
-        // 合計に対する比率
-        const total = leftScore + rightScore;
-        const bar = document.getElementById(`bar-${axis}`);
+    // モーダルで結果表示
+    function openResultModal(key) {
+        document.getElementById('type-modal').style.display = 'block';
+        // モーダル内に結果画面のHTMLをコピーして表示
+        // ここでは簡易的にレンダリング関数を呼ぶ
+        const body = document.getElementById('modal-body');
+        // Reset modal content container structure
+        body.innerHTML = document.getElementById('result-screen').innerHTML;
         
-        if (leftScore >= rightScore) {
-            // 左勝勢
-            const percent = (leftScore / (30)) * 50; // 最大30点として
-            bar.className = 'axis-bar-fill fill-left';
-            bar.style.width = `${Math.min(percent, 50)}%`;
-        } else {
-            // 右勝勢
-            const percent = (rightScore / (30)) * 50;
-            bar.className = 'axis-bar-fill fill-right';
-            bar.style.width = `${Math.min(percent, 50)}%`;
+        // Render data into modal
+        // IDが重複しないようにコンテキストを指定してレンダリングする必要があるが、
+        // 簡易実装として、データを流し込んだあとにクラスベースで書き換えるか、
+        // あるいはシンプルにデータ表示用関数を使い回す
+        
+        // Hack: 結果画面のDOM要素IDを使って書き換えてから、そのHTMLをモーダルにコピーする
+        renderResult(key, "result-screen");
+        body.innerHTML = document.getElementById('result-screen').innerHTML;
+        
+        // 結果画面自体は隠しておく（トップページから来た場合）
+        if(!document.getElementById('home-screen').style.display || document.getElementById('home-screen').style.display !== 'none'){
+             document.getElementById('result-screen').classList.add('hidden');
         }
     }
+    
+    function closeModal() {
+        document.getElementById('type-modal').style.display = 'none';
+    }
+
+    // 結果レンダリング共通関数
+    function renderResult(key, containerId) {
+        const t = types[key];
+        const root = document.getElementById(containerId);
+        
+        // 基本情報
+        root.querySelector('#res-icon').textContent = t.icon;
+        root.querySelector('#res-name').textContent = t.name;
+        root.querySelector('#res-catch').textContent = t.catch;
+        
+        // レベル計算 (擬似)
+        // 本来はスコア合計だが、カタログ表示時は固定値かランダムにする
+        // ここでは診断後ならスコアを使い、カタログなら適当に85とする
+        let total = 0;
+        for(let i=1; i<=4; i++) total += Math.max(scores[i].L, scores[i].R);
+        let level = total > 0 ? Math.floor((total/120)*100) : 88; 
+        if(level < 10) level = 10;
+        root.querySelector('#res-level').textContent = level;
+
+        // バー更新 (診断後のみ有効。カタログ時は50:50)
+        updateBar(root, 1, scores[1].L, scores[1].R);
+        updateBar(root, 2, scores[2].L, scores[2].R);
+        updateBar(root, 3, scores[3].L, scores[3].R);
+        updateBar(root, 4, scores[4].L, scores[4].R);
+
+        // マズローリスト
+        const list = root.querySelector('#maslow-list');
+        list.innerHTML = `
+            <li class="maslow-item"><div class="lvl-title">Lv.1 Physiological</div><div class="lvl-text">${t.l1}</div></li>
+            <li class="maslow-item"><div class="lvl-title">Lv.2 Safety</div><div class="lvl-text">${t.l2}</div></li>
+            <li class="maslow-item"><div class="lvl-title">Lv.3 Social</div><div class="lvl-text">${t.l3}</div></li>
+            <li class="maslow-item"><div class="lvl-title">Lv.4 Esteem</div><div class="lvl-text">${t.l4}</div></li>
+            <li class="maslow-item"><div class="lvl-title">Lv.5 Self-Actualization</div><div class="lvl-text">${t.l5}</div></li>
+        `;
+
+        // Extra info
+        root.querySelector('#best-match').textContent = t.best;
+        root.querySelector('#match-desc').textContent = t.matchDesc;
+        root.querySelector('#dark-text').textContent = t.dark;
+        root.querySelector('#advice-text').textContent = t.advice;
+    }
+
+    function updateBar(root, axis, l, r) {
+        // カタログ表示のときはスコア0なので50%にする
+        if(l === 0 && r === 0) { l = 1; r = 1; }
+        
+        const total = l + r;
+        const bar = root.querySelector(`#bar-${axis}`);
+        
+        // 中央からの伸び
+        if (l >= r) {
+            // 左勝勢
+            const p = (l / total) * 50; 
+            bar.className = 'bar-fill fill-L';
+            bar.style.width = `${Math.min(p, 50)}%`;
+        } else {
+            // 右勝勢
+            const p = (r / total) * 50;
+            bar.className = 'bar-fill fill-R';
+            bar.style.width = `${Math.min(p, 50)}%`;
+        }
+    }
+
 </script>
 </body>
 </html>
