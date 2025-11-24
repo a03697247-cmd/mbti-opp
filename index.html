@@ -2,417 +2,572 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>愛の哲学診断 - Love Philosophy</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Love Philosophy | 愛の哲学診断</title>
+    
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;600&family=Shippori+Mincho:wght@400;600&display=swap" rel="stylesheet">
+
     <style>
         :root {
-            --bg-color: #1a1a1a;
-            --card-bg: #2d2d2d;
-            --text-main: #e0e0e0;
-            --text-sub: #a0a0a0;
-            --accent: #d4af37; /* Gold */
-            --accent-hover: #f4cf57;
+            /* カラーパレット: エレガント・リュクス */
+            --bg-color: #F9F8F6; /* 高級紙のようなオフホワイト */
+            --text-main: #2C2C2C; /* 漆黒ではなくチャコール */
+            --text-sub: #6E6E6E;
+            --accent: #C5A059; /* シャンパンゴールド */
+            --accent-light: #E8DCC2;
+            --card-bg: #FFFFFF;
+            --shadow: 0 10px 40px rgba(197, 160, 89, 0.15);
+            --border: 1px solid rgba(197, 160, 89, 0.2);
+        }
+
+        * {
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
-            font-family: "Hiragino Mincho ProN", "Yu Mincho", serif; /* 明朝体で知的さを演出 */
+            font-family: 'Shippori Mincho', 'Yu Mincho', serif;
             background-color: var(--bg-color);
             color: var(--text-main);
             margin: 0;
-            padding: 20px;
+            padding: 0;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100vh;
-            line-height: 1.6;
+            line-height: 1.8;
+            letter-spacing: 0.05em;
+            background-image: radial-gradient(#E8DCC2 1px, transparent 1px);
+            background-size: 30px 30px; /* 控えめなドット柄 */
         }
 
         .container {
             width: 100%;
-            max-width: 700px;
+            max-width: 500px; /* スマホで見やすい幅 */
+            min-height: 100vh;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+        }
+
+        /* 共通カードデザイン */
+        .card {
             background: var(--card-bg);
-            padding: 40px;
-            border-radius: 8px;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            border-radius: 4px; /* 角を丸くしすぎないのが高級感のコツ */
+            padding: 40px 30px;
+            box-shadow: var(--shadow);
+            border: var(--border);
             text-align: center;
-            border: 1px solid #444;
+            position: relative;
+            transition: transform 0.4s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.4s ease;
         }
-
-        h1 { font-size: 1.8rem; margin-bottom: 0.5rem; letter-spacing: 2px; }
-        .subtitle { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 2rem; font-family: sans-serif; }
-
-        /* プログレスバー */
-        .progress-area { margin-bottom: 30px; }
-        .progress-bar-bg { width: 100%; height: 2px; background: #444; position: relative; }
-        .progress-bar-fill { height: 100%; background: var(--accent); width: 0%; transition: width 0.3s ease; }
-        .progress-text { font-size: 0.8rem; color: var(--text-sub); margin-top: 5px; font-family: sans-serif; }
-
-        /* 質問エリア */
-        .question-box { margin-bottom: 40px; min-height: 120px; display: flex; align-items: center; justify-content: center; }
-        .question-text { font-size: 1.3rem; font-weight: bold; }
         
-        /* 選択肢ボタン */
-        .options-grid {
-            display: grid;
-            gap: 15px;
-            grid-template-columns: 1fr;
+        /* 飾り枠（二重線） */
+        .card::before {
+            content: "";
+            position: absolute;
+            top: 10px; left: 10px; right: 10px; bottom: 10px;
+            border: 1px solid var(--accent-light);
+            pointer-events: none;
         }
+
+        h1 {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 2.8rem;
+            font-weight: 600;
+            color: var(--accent);
+            margin: 0 0 10px 0;
+            letter-spacing: 0.02em;
+            line-height: 1;
+        }
+
+        .subtitle {
+            font-size: 0.8rem;
+            color: var(--text-sub);
+            margin-bottom: 30px;
+            text-transform: uppercase;
+            letter-spacing: 0.2em;
+        }
+
+        p { margin-bottom: 20px; font-size: 0.95rem; }
+
+        /* ボタン */
         .btn {
+            display: block;
+            width: 100%;
+            padding: 18px;
+            margin: 15px 0;
             background: transparent;
-            border: 1px solid #666;
+            border: 1px solid var(--accent);
             color: var(--text-main);
-            padding: 15px 20px;
+            font-family: 'Shippori Mincho', serif;
             font-size: 1rem;
             cursor: pointer;
-            transition: all 0.3s;
-            border-radius: 4px;
-            text-align: left;
+            transition: all 0.3s ease;
             position: relative;
-            overflow: hidden;
+            z-index: 1;
         }
-        .btn:hover { border-color: var(--accent); color: var(--accent); background: rgba(212, 175, 55, 0.05); }
-        .btn-small { font-size: 0.9rem; padding: 12px; color: var(--text-sub); text-align: center; }
-
-        /* 結果画面 */
-        .result-header { border-bottom: 1px solid #444; padding-bottom: 20px; margin-bottom: 30px; }
-        .type-name { font-size: 2.5rem; color: var(--accent); margin: 10px 0; font-weight: bold; }
-        .level-badge { display: inline-block; background: #444; padding: 5px 15px; border-radius: 20px; font-size: 0.9rem; font-family: sans-serif; margin-bottom: 10px;}
         
-        .chart-wrapper { position: relative; height: 300px; width: 100%; margin: 30px 0; }
-        .desc-box { text-align: left; background: #222; padding: 20px; border-radius: 4px; margin-top: 20px; font-family: sans-serif; font-size: 0.95rem; }
-        .axis-desc { margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #333; }
-        .axis-desc:last-child { border-bottom: none; }
-        .axis-title { color: var(--accent); font-weight: bold; margin-bottom: 5px; display: block; }
-
-        .hidden { display: none; }
-        .fade-in { animation: fadeIn 0.8s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* スマホ対応 */
-        @media (max-width: 600px) {
-            .container { padding: 20px; width: 95%; }
-            .type-name { font-size: 1.8rem; }
+        .btn:hover {
+            background: var(--accent);
+            color: #fff;
         }
+
+        .btn-start {
+            background: var(--text-main);
+            color: #fff;
+            border-color: var(--text-main);
+            margin-top: 30px;
+        }
+        .btn-start:hover {
+            background: var(--accent);
+            border-color: var(--accent);
+        }
+
+        /* 質問画面 */
+        .progress-area {
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            font-family: 'Cormorant Garamond', serif;
+            color: var(--accent);
+        }
+        .progress-line {
+            flex-grow: 1;
+            height: 1px;
+            background: var(--accent-light);
+            margin: 0 15px;
+            position: relative;
+        }
+        .progress-fill {
+            position: absolute;
+            left: 0; top: 0; bottom: 0;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.5s ease;
+        }
+
+        .question-text {
+            font-size: 1.2rem;
+            font-weight: 600;
+            min-height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+        }
+
+        /* 選択肢ボタン */
+        .option-btn {
+            text-align: left;
+            padding: 15px 20px;
+            border: 1px solid #eee;
+            margin-bottom: 12px;
+        }
+        .option-btn:hover { border-color: var(--accent); }
+        .btn-label { font-size: 0.8rem; color: var(--accent); display: block; margin-bottom: 4px; font-family: sans-serif;}
+
+        /* 結果画面（スクショ映えエリア） */
+        .result-card-area {
+            background: #fff;
+            padding: 20px 0;
+            margin-bottom: 20px;
+        }
+
+        .mental-age {
+            display: inline-block;
+            border-bottom: 1px solid var(--accent);
+            padding-bottom: 5px;
+            margin-bottom: 15px;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.1rem;
+            color: var(--text-main);
+        }
+        
+        .type-catch {
+            font-size: 1rem;
+            color: var(--accent);
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .type-name {
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            line-height: 1.3;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 260px;
+            width: 100%;
+            margin: 0 auto 20px auto;
+        }
+
+        .result-desc {
+            text-align: left;
+            font-size: 0.9rem;
+            color: var(--text-sub);
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        /* シェアボタン群 */
+        .share-area {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        .btn-share {
+            padding: 12px;
+            font-size: 0.9rem;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        .btn-twitter { background: #000; color: #fff; border-color: #000; }
+        .btn-insta { background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%); color: white; border: none; }
+
+        /* アニメーション */
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 1s cubic-bezier(0.2, 0.8, 0.2, 1) forwards; }
+        .fade-out { animation: fadeOut 0.5s ease forwards; }
+        
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeOut { to { opacity: 0; } }
+
+        /* ローディング */
+        .loader-text {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.2rem;
+            color: var(--accent);
+            margin-top: 20px;
+            animation: pulse 1.5s infinite;
+        }
+        @keyframes pulse { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
+
     </style>
 </head>
 <body>
 
-<div class="container" id="app">
-    <div id="start-screen" class="fade-in">
-        <h1>愛の哲学診断</h1>
-        <div class="subtitle">Love Philosophy & Maturity Test</div>
-        <p style="margin-bottom: 30px; font-size: 0.95rem;">
-            あなたの愛は「欠乏」か、それとも「成熟」か。<br>
-            40の問いから、あなたの恋愛における<br>
-            「精神年齢」と「行動原理」を解析します。
-        </p>
-        <button class="btn" style="text-align:center; border-color:var(--accent); color:var(--accent);" onclick="start()">診断を開始する</button>
-    </div>
-
-    <div id="quiz-screen" class="hidden">
-        <div class="progress-area">
-            <div class="progress-bar-bg"><div class="progress-bar-fill" id="progress-bar"></div></div>
-            <div class="progress-text" id="progress-text">Q. 1 / 40</div>
-        </div>
+<div class="container">
+    
+    <div id="start-screen" class="card fade-in">
+        <h1>Love<br>Philosophy</h1>
+        <div class="subtitle">愛の哲学診断</div>
         
-        <div class="question-box">
-            <div class="question-text" id="question-text">質問読み込み中...</div>
+        <p>愛とは「欠乏」か、それとも「成熟」か。</p>
+        <p>40の問いが、<br>あなたの魂の輪郭を描き出します。</p>
+        
+        <button class="btn btn-start" onclick="startDiagnosis()">診断を始める</button>
+        <div style="margin-top: 20px; font-size: 0.7rem; color: #aaa;">所要時間：約3分</div>
+    </div>
+
+    <div id="quiz-screen" class="card hidden">
+        <div class="progress-area">
+            <span>Q. <span id="q-curr">1</span></span>
+            <div class="progress-line"><div class="progress-fill" id="progress-bar"></div></div>
+            <span>40</span>
         </div>
 
-        <div class="options-grid" id="options-container">
+        <div class="question-text" id="q-text">
+            </div>
+
+        <div id="options-area">
             </div>
     </div>
 
-    <div id="result-screen" class="hidden fade-in">
-        <div class="result-header">
-            <span class="level-badge">精神年齢: <span id="level-val">--</span>歳</span>
-            <div class="subtitle" style="margin-bottom:5px;">あなたの恋愛哲学タイプ</div>
-            <div class="type-name" id="type-name">ANALYZING...</div>
-            <div id="type-catch" style="font-size:1rem; font-style:italic;"></div>
-        </div>
+    <div id="loading-screen" class="card hidden" style="border:none; box-shadow:none; background:transparent;">
+        <div style="font-size:2rem; color:var(--accent);">✦</div>
+        <div class="loader-text" id="loader-text">Analyzing...</div>
+    </div>
 
-        <div class="chart-wrapper">
-            <canvas id="radarChart"></canvas>
+    <div id="result-screen" class="card hidden">
+        <div class="result-card-area">
+            <div class="mental-age">Love Maturity: Lv.<span id="level-val">--</span></div>
+            <div class="type-catch" id="result-catch">Catchphrase</div>
+            <div class="type-name" id="result-name">Animal Type</div>
+            
+            <div class="chart-container">
+                <canvas id="radarChart"></canvas>
+            </div>
+            
+            <p style="font-size:0.8rem; color:#aaa; margin-top:10px;">@LovePhilosophy_Test</p>
         </div>
-
-        <div class="desc-box" id="result-detail">
+        <div class="result-desc" id="result-desc">
             </div>
 
-        <button class="btn" style="margin-top:20px; text-align:center;" onclick="location.reload()">もう一度診断する</button>
+        <div class="share-area">
+            <button class="btn btn-share btn-twitter" onclick="shareX()">
+                Share on X
+            </button>
+            <button class="btn btn-share btn-insta" onclick="alert('この画面をスクリーンショットして\nストーリーズに投稿してください。')">
+                Instagram
+            </button>
+        </div>
+        <button class="btn" style="margin-top:15px; border:none; font-size:0.9rem;" onclick="location.reload()">トップに戻る</button>
     </div>
+
 </div>
 
 <script>
-    // --- データ定義 ---
-    // axis: 1=距離(A/U), 2=行動(S/P), 3=認識(R/C), 4=世界(I/D)
-    // weight: A/S/R/I 側の質問なら 'L' (Left), U/P/C/D 側の質問なら 'R' (Right)
+    // --- 16タイプ定義 (ハイブリッド動物キャラクター) ---
+    // A:孤高, U:融合 | S:本能, P:理知 | R:受容, C:創造 | I:没入, D:超越
+    const types = {
+        "ASRI": { name: "アトリエの黒猫", catch: "誰にも染まらない、気高き芸術家", desc: "自立心が強く、本能のままに生きています。媚びず、群れず、ありのままの自分を愛するその姿は、多くの人を惹きつけますが、誰にも飼い慣らすことはできません。" },
+        "ASRD": { name: "旅する渡り鳥", catch: "風のように愛し、風のように去る", desc: "執着がなく、すべてを達観しています。恋愛も人生という長い旅の一部として楽しみますが、決して一つの場所に留まることはありません。" },
+        "ASCI": { name: "孤高のユニコーン", catch: "理想郷に住む、誇り高き魂", desc: "独自の美学を持ち、妥協を許しません。現実の恋愛には退屈しがちですが、一度心を許せば、魔法のような美しい世界を見せてくれます。" },
+        "ASCD": { name: "夜明けの雪豹", catch: "静寂を愛する、美しき戦略家", desc: "非常に自律しており、状況をコントロールする能力に長けています。クールで近寄りがたい雰囲気ですが、二人の未来を誰よりも冷静に見通しています。" },
+        "APRI": { name: "図書館のフクロウ", catch: "沈黙を守る、賢者の愛", desc: "言葉数は少ないですが、その愛は海のように深いです。頑固で不器用な一面もありますが、一度交わした約束は死んでも守り抜く誠実さがあります。" },
+        "APRD": { name: "深海の鯨", catch: "全てを受け流す、悠久の哲学", desc: "感情の波に飲まれず、常にフラットです。トラブルが起きても動じず、すべてを「それもまた人生」と笑って許せる、成熟した精神の持ち主です。" },
+        "APCI": { name: "摩天楼の鷹", catch: "頂点を目指す、孤独な王", desc: "高いプライドと上昇志向を持ちます。パートナーにも高いレベルを求めますが、それは二人で最強のペアになり、見たことのない景色を見るためです。" },
+        "APCD": { name: "荒野の狼", catch: "完成された個、揺るぎない信念", desc: "精神年齢が極めて高いタイプ。依存も甘えも必要とせず、互いに背中を預けられる、対等で高潔なパートナーシップだけを認めます。" },
+        
+        "USRI": { name: "恋するウサギ", catch: "世界は愛で回っている", desc: "愛情深く、寂しがり屋。常に誰かと繋がっていたいタイプです。駆け引きゼロで、全身全霊で愛を表現するその姿は、守ってあげたくなる魅力があります。" },
+        "USRD": { name: "陽だまりのゴールデン", catch: "無償の愛を注ぐ、最高の相棒", desc: "慈愛に満ちており、相手の欠点さえも愛します。すべてを許し、受け入れるその包容力は、パートナーにとって最強の「安全基地」となります。" },
+        "USCI": { name: "情熱のパピヨン", catch: "愛の力で、日常をドラマに変える", desc: "関係をより良くするために全力を尽くします。サプライズや変化を好み、マンネリとは無縁。あなたといれば、退屈な日は一日たりともないでしょう。" },
+        "USCD": { name: "敏腕な羊飼い", catch: "愛を導き、育てる指導者", desc: "深い繋がりを求めつつ、冷静に関係をコントロールします。相手の才能を見抜き、成功へ導く能力に長けた、いわゆる『あげまん/あげちん』タイプです。" },
+        "UPRI": { name: "王家のサラブレッド", catch: "気高く、誠実な献身", desc: "誠実で尽くすタイプ。ルールや約束を重んじ、選んだパートナーに生涯の忠誠を誓います。その愛は、格式高く、決して揺らぐことはありません。" },
+        "UPRD": { name: "聖域の白鳥", catch: "汚れなき愛、究極の癒やし", desc: "相手と一体になりたいと願いつつ、決して感情に乱されません。誰に対しても平等で優しく、そばにいるだけで心が洗われるようなオーラを持っています。" },
+        "UPCI": { name: "革命のペガサス", catch: "二人で空へ、見たことのない世界へ", desc: "強い絆と、向上心を併せ持ちます。「私たち」という単位で物事を考え、二人三脚で理想の帝国を築き上げる、パワフルなリーダー気質です。" },
+        "UPCD": { name: "伝説の鳳凰", catch: "時空を超えた、愛の最終形態", desc: "融合と自律、情熱と冷静のバランスが完璧に取れています。マズローが目指した自己実現に最も近い、輪廻転生してもまた巡り会いたいと思わせる存在です。" }
+    };
+
+    // 質問データ（40問）
     const questions = [
-        // --- 軸1: 距離感 (A:孤高 vs U:融合) ---
-        { t: "映画を見終わった直後、あなたはどうしたい？", axis: 1, options: ["しばらく一人で余韻に浸りたい(A)", "すぐに相手と感想を語り合いたい(U)"] },
-        { t: "誰にも言えないような、個人的で小さな成功体験をした時。", axis: 1, options: ["自分ひとりでその達成感を噛み締めれば十分だ(A)", "誰かに話して「すごい」と言われないと欠けている気がする(U)"] },
-        { t: "自分の過去のトラウマや、言葉にできない複雑な感情について。", axis: 1, options: ["恋人でも完全に理解されることは不可能だし、その必要もない(A)", "愛し合っているなら、言葉を尽くして完全に理解し合いたい(U)"] },
-        { t: "連絡が丸一日途絶えた時。", axis: 1, options: ["便りがないのは元気な証拠。それぞれの生活がある(A)", "どんなに忙しくても、スタンプ一つの繋がりは欲しい(U)"] },
-        { t: "相手が理由もなく不機嫌で、黙り込んでいる時。", axis: 1, options: ["そっとしておく。相手の感情は相手のものだから(A)", "「どうしたの？」と声をかける。二人の空気は二人で解決したい(U)"] },
-        { t: "二人でいて会話が途切れ、沈黙が続いた時。", axis: 1, options: ["全く気にならず、それぞれのことをする(A)", "何か話さなきゃと気まずくなるか、構ってほしくなる(U)"] },
-        { t: "大きな悩みを抱えた時。", axis: 1, options: ["自分の中で答えが出るまで誰にも言わない(A)", "すぐに恋人や親友に話して楽になりたい(U)"] },
-        { t: "将来の話をする時の主語。", axis: 1, options: ["「私はこうしたい、あなたは？」と考える(A)", "「私たちはこうなる」と自然にセットで考える(U)"] },
-        { t: "自分の部屋に恋人が私物を置いていくこと。", axis: 1, options: ["あまり浸食されたくない、自分の聖域は守りたい(A)", "自分の部屋が二人の色に染まっていくのが嬉しい(U)"] },
-        { t: "相手が不機嫌だと、あなたも気分が落ち込む？", axis: 1, options: ["相手は相手、自分は自分と切り離せる(A)", "ダイレクトに影響を受けて、暗い気持ちになる(U)"] },
-
-        // --- 軸2: 行動原理 (S:本能 vs P:理知) ---
-        { t: "レストランを決める決め手は？", axis: 2, options: ["店構えや匂いなど、その場の直感(S)", "レビューの点数や価格帯のデータ(P)"] },
-        { t: "約束していたデートだが、当日どうしても気分が乗らない。", axis: 2, options: ["正直に伝えてリスケするか、プランを変える(S)", "約束は約束なので、気合を入れて予定通り行く(P)"] },
-        { t: "高価なものを買う時。", axis: 2, options: ["一目惚れしたら、後先考えずに買う(S)", "一度持ち帰り、予算や使用頻度を計算する(P)"] },
-        { t: "議論における「納得」とは？", axis: 2, options: ["理屈はどうでもいいから、誠意や愛を感じたい(S)", "感情論ではなく、論理的に正しい結論を出したい(P)"] },
-        { t: "長続きするカップルにとって、より重要なのは？", axis: 2, options: ["ときめきや、肌が合うといった「生理的な熱量」(S)", "一度決めた相手と添い遂げようとする「意志と覚悟」(P)"] },
-        { t: "深夜の赤信号。車も人も絶対に来ないが見通しが良い。", axis: 2, options: ["渡ってしまう(S)", "青になるまで待つ(P)"] },
-        { t: "過去に言った「ずっと好き」という言葉。", axis: 2, options: ["あの時は本気だったのだから、嘘ではない(S)", "言った以上は、責任を持って維持すべきだ(P)"] },
-        { t: "仕事中に恋人から「寂しい」とLINEが来た。", axis: 2, options: ["トイレに行くふりをして電話するか、即レスする(S)", "仕事が終わってから「どうしたの？」と返す(P)"] },
-        { t: "今日の服を選ぶ基準は？", axis: 2, options: ["「今これを着たい！」という気分の高まり(S)", "TPOや、会う相手にどう見られるか(P)"] },
-        { t: "相手を傷つけないための「優しい嘘」はあり？", axis: 2, options: ["バレなきゃあり。その場の空気が大事(S)", "なし。どんな時も誠実であるべき(P)"] },
-
-        // --- 軸3: 現実認識 (R:受容 vs C:創造) ---
-        { t: "古びてツタの絡まった建物を見た時。", axis: 3, options: ["「歴史を感じて美しい」とそのまま愛でる(R)", "「リノベーションしたら良いカフェになる」と想像する(C)"] },
-        { t: "恋人の服装が絶妙にダサかったら。", axis: 3, options: ["それもこの人の味だと思って、特に指摘しない(R)", "一緒にかっこいい服を買いに行って改造する(C)"] },
-        { t: "相手が仕事の愚痴を言っている。", axis: 3, options: ["「大変だったね」とひたすら共感して聞く(R)", "「こうすればよかったんじゃない？」と解決策を探る(C)"] },
-        { t: "レシピ通りに作った料理。", axis: 3, options: ["基本に忠実に、完成された味を楽しむ(R)", "隠し味を入れたり、自分好みにアレンジしたくなる(C)"] },
-        { t: "二人の間に問題が起きた時。", axis: 3, options: ["時が解決するのを待つか、我慢してやり過ごす(R)", "雨降って地固まる。これを機にルールを見直す(C)"] },
-        { t: "もらったプレゼントが好みじゃなかった。", axis: 3, options: ["選んでくれた気持ちだけで100点満点だ(R)", "嬉しいけど、次は一緒に選びたいと伝える(C)"] },
-        { t: "旅行に行くならどっち？", axis: 3, options: ["手付かずの大自然。不便でもそのままがいい(R)", "美しく整備されたリゾートや都市。計算された美が好き(C)"] },
-        { t: "恋人に「もっとこうなってほしい」という理想がある？", axis: 3, options: ["あまりない。今のままでいてほしい(R)", "ある。お互いに高め合って成長したい(C)"] },
-        { t: "修復不可能な別れ話になった時。", axis: 3, options: ["運命だったと受け入れ、静かにフェードアウト(R)", "なぜダメだったか話し合い、次に活かして終わる(C)"] },
-        { t: "歪んだ形の陶器を見て。", axis: 3, options: ["その歪みにこそ味がある(R)", "綺麗な円形の方が技術が高くて美しい(C)"] },
-
-        // --- 軸4: 世界観 (I:没入 vs D:超越) ---
-        { t: "デート中にゲリラ豪雨で全身びしょ濡れになった。", axis: 4, options: ["最悪！服も台無しでテンション下がる(I)", "なんか笑えてきた。これはこれでネタになる(D)"] },
-        { t: "感動的な映画を見た時。", axis: 4, options: ["登場人物になりきってボロボロ泣く(I)", "「脚本が上手いな」「演出が憎いな」と分析して見る(D)"] },
-        { t: "激しい言い合いをしている最中。", axis: 4, options: ["頭に血が上って、売り言葉に買い言葉になる(I)", "どこかで「あ、今自分すごく怒ってるな」と冷めている(D)"] },
-        { t: "昔の恥ずかしい恋愛を思い出した時。", axis: 4, options: ["あーっ！と叫びたくなるくらい恥ずかしい(I)", "「あの頃は若かったな」と他人事のように思う(D)"] },
-        { t: "フラッシュモブのような派手な演出をされたら。", axis: 4, options: ["主役になった気分で感激する(I)", "周りの客の視線が気になって、恥ずかしさが勝つ(D)"] },
-        { t: "恋に落ちるとどうなる？", axis: 4, options: ["その人のことばかり考えて、仕事も手につかない(I)", "好きだけど、生活リズムややるべきことは崩さない(D)"] },
-        { t: "注射や怪我の痛みに対して。", axis: 4, options: ["痛いものは痛い、怖い(I)", "痛みを観察してやり過ごす、耐えるのが得意(D)"] },
-        { t: "「君のためなら死ねる」というセリフについて。", axis: 4, options: ["素敵。それくらい愛されたい(I)", "重いし、実際に死なれたら迷惑だと冷静に思う(D)"] },
-        { t: "ハロウィンで仮装することについて。", axis: 4, options: ["全力でやって楽しむ(I)", "見ている方が楽しい、やるのは照れくさい(D)"] },
-        { t: "人生とは？", axis: 4, options: ["一度きりの、燃え尽きるようなドラマ(I)", "暇つぶし、または長い旅のようなもの(D)"] }
+        // 軸1: 距離感 (A:孤高 vs U:融合)
+        { t: "映画を見終わった直後の気持ちは？", axis: 1, options: ["一人で余韻に浸りたい", "すぐに感想を語り合いたい"] },
+        { t: "誰にも言えない小さな成功をした時。", axis: 1, options: ["一人で噛み締めれば十分だ", "誰かに褒められたい"] },
+        { t: "自分の深いトラウマについて。", axis: 1, options: ["完全に理解されるのは不可能だ", "愛するなら全て理解し合いたい"] },
+        { t: "連絡が丸一日途絶えた時。", axis: 1, options: ["便りがないのは元気な証拠", "スタンプ一つの繋がりは欲しい"] },
+        { t: "相手が理由もなく不機嫌な時。", axis: 1, options: ["そっとしておく", "「どうしたの？」と声をかける"] },
+        { t: "沈黙が続いた時。", axis: 1, options: ["全く気にならず平気だ", "何か話さなきゃと気まずい"] },
+        { t: "大きな悩みを抱えた時。", axis: 1, options: ["自分の中で答えを出したい", "すぐに誰かに話して楽になりたい"] },
+        { t: "将来の話をする時の主語。", axis: 1, options: ["「私は」こうしたい", "「私たちは」こうなる"] },
+        { t: "自分の部屋に恋人の私物が増えること。", axis: 1, options: ["あまり浸食されたくない", "二人の色に染まるのが嬉しい"] },
+        { t: "相手が不機嫌だと自分も落ち込む？", axis: 1, options: ["自分は自分と切り離せる", "ダイレクトに影響を受ける"] },
+        // 軸2: 行動原理 (S:本能 vs P:理知)
+        { t: "店選びの基準は？", axis: 2, options: ["店構えや直感", "レビュー点数やコスパ"] },
+        { t: "気分の乗らないデートの約束。", axis: 2, options: ["正直に伝えてリスケする", "約束だから気合で行く"] },
+        { t: "高価な買い物。", axis: 2, options: ["一目惚れしたら買う", "予算や頻度を計算する"] },
+        { t: "議論での「納得」とは？", axis: 2, options: ["誠意や愛を感じたい", "論理的な正しさが欲しい"] },
+        { t: "長続きに必要なのは？", axis: 2, options: ["生理的なときめき", "添い遂げる意志と覚悟"] },
+        { t: "誰もいない深夜の赤信号。", axis: 2, options: ["渡ってしまう", "青になるまで待つ"] },
+        { t: "過去の「ずっと好き」という言葉。", axis: 2, options: ["あの時は本気だった", "責任を持って維持すべき"] },
+        { t: "仕事中に「寂しい」とLINEが来たら？", axis: 2, options: ["トイレでこっそり即レス", "終わってから返す"] },
+        { t: "服選びの基準。", axis: 2, options: ["今これを着たい気分", "TPOや相手への配慮"] },
+        { t: "優しい嘘はあり？", axis: 2, options: ["バレなきゃあり", "なし。誠実であるべき"] },
+        // 軸3: 現実認識 (R:受容 vs C:創造)
+        { t: "古びた廃墟を見た時。", axis: 3, options: ["歴史を感じて美しい", "改装したら良い店になりそう"] },
+        { t: "恋人の服がダサかったら。", axis: 3, options: ["それも味だと受け入れる", "一緒に買いに行って改造する"] },
+        { t: "相手の仕事の愚痴。", axis: 3, options: ["ひたすら共感して聞く", "解決策を探る"] },
+        { t: "レシピ通りの料理。", axis: 3, options: ["基本に忠実に楽しむ", "自分好みにアレンジしたい"] },
+        { t: "トラブルが起きた時。", axis: 3, options: ["時が解決するのを待つ", "これを機にルールを見直す"] },
+        { t: "好みの色じゃないプレゼント。", axis: 3, options: ["気持ちだけで100点だ", "次は一緒に選びたいと言う"] },
+        { t: "旅行に行くなら？", axis: 3, options: ["手付かずの大自然", "整備されたリゾートや都市"] },
+        { t: "恋人への理想。", axis: 3, options: ["今のままでいてほしい", "もっと成長してほしい"] },
+        { t: "別れ話になったら。", axis: 3, options: ["運命と受け入れ身を引く", "原因を話し合い次に活かす"] },
+        { t: "歪んだ形の陶器。", axis: 3, options: ["歪みにこそ味がある", "綺麗な円形の方が美しい"] },
+        // 軸4: 世界観 (I:没入 vs D:超越)
+        { t: "デート中にゲリラ豪雨。", axis: 4, options: ["最悪！テンション下がる", "なんか笑えてきた"] },
+        { t: "感動的な映画。", axis: 4, options: ["役になりきって号泣する", "脚本や演出を分析して見る"] },
+        { t: "激しい喧嘩中。", axis: 4, options: ["頭に血が上ってしまう", "どこか冷めた自分がいる"] },
+        { t: "過去の黒歴史。", axis: 4, options: ["叫びたいくらい恥ずかしい", "他人事のように思う"] },
+        { t: "フラッシュモブをされたら。", axis: 4, options: ["主役気分で感激する", "周りの目が気になり恥ずかしい"] },
+        { t: "恋に落ちると？", axis: 4, options: ["仕事も手につかなくなる", "生活リズムは崩さない"] },
+        { t: "注射の痛み。", axis: 4, options: ["怖い、痛い", "痛みを観察してやり過ごす"] },
+        { t: "「君のためなら死ねる」。", axis: 4, options: ["素敵。愛されたい", "実際に死なれたら困る"] },
+        { t: "ハロウィンの仮装。", axis: 4, options: ["全力で楽しむ", "見る専でいい"] },
+        { t: "人生とは？", axis: 4, options: ["一度きりのドラマ", "暇つぶしか、長い旅"] }
     ];
 
-    // 結果タイプの定義（16パターン）
-    // キー: A/U + S/P + R/C + I/D (例: "ASRI")
-    const types = {
-        // --- 孤高(A) ベース ---
-        "ASRI": { name: "野生の猫", catch: "誰にも飼い慣らせない、純真な魂", desc: "自立心が強く、本能のままに生きるタイプ。相手をありのまま受け入れ、自分も自由であることを求めます。" },
-        "ASRD": { name: "旅する賢者", catch: "風のように現れ、風のように去る", desc: "執着がなく、達観しています。恋愛も人生の一部として楽しみますが、溺れることはありません。" },
-        "ASCI": { name: "独創的な芸術家", catch: "私だけの世界、私だけの色", desc: "自分の感性を信じ、理想の関係をクリエイトします。一人の時間を愛しますが、情熱的な一面も。" },
-        "ASCD": { name: "孤高の戦略家", catch: "冷静と情熱のあいだ", desc: "非常に自律しており、かつ状況をコントロールする能力に長けています。クールですが内面はユニークです。" },
-        "APRI": { name: "沈黙の守護者", catch: "言葉よりも行動で語る", desc: "誠実で、一度決めたことは守り抜きます。派手さはありませんが、深い受容力で相手を包み込みます。" },
-        "APRD": { name: "静かなる観測者", catch: "全てを見通す、動じない心", desc: "感情に流されず、常にフラット。トラブルが起きても動じず、大人の対応ができる成熟した人です。" },
-        "APCI": { name: "建築家", catch: "理想の城を、一人で築く", desc: "高い美意識と計画性を持ちます。相手にも成長を求めますが、それは二人の未来を真剣に考えているからです。" },
-        "APCD": { name: "鋼の哲学者", catch: "完成された個、揺るぎない信念", desc: "精神年齢が極めて高いタイプ。依存も甘えもなく、対等で高潔なパートナーシップを築きます。" },
-
-        // --- 融合(U) ベース ---
-        "USRI": { name: "恋する子犬", catch: "世界は愛で回っている", desc: "愛情深く、素直で、常に相手と繋がっていたいタイプ。感情豊かで、全身全霊で恋を楽しみます。" },
-        "USRD": { name: "天使の微笑み", catch: "全てを許し、ただ寄り添う", desc: "慈愛に満ちていますが、どこか達観しています。相手の欠点も愛し、包み込むような優しさを持っています。" },
-        "USCI": { name: "情熱の演出家", catch: "二人なら、奇跡も起こせる", desc: "関係をより良くするために全力を尽くします。サプライズやイベントが好きで、飽きさせない努力家です。" },
-        "USCD": { name: "敏腕プロデューサー", catch: "愛を管理し、育てる人", desc: "深い繋がりを求めつつ、冷静に関係をコントロールします。相手を成功へ導くあげまん/あげちんタイプ。" },
-        "UPRI": { name: "献身的なパートナー", catch: "あなたの幸せが、私の幸せ", desc: "誠実で尽くすタイプ。ルールや約束を重んじ、安定した信頼関係を築くことに喜びを感じます。" },
-        "UPRD": { name: "慈悲深い僧侶", catch: "広くて深い、海のような愛", desc: "相手と一体になりたいと願いつつ、感情に振り回されない強さがあります。究極の癒やし系です。" },
-        "UPCI": { name: "革命家の聖母", catch: "共に歩み、共に高め合う", desc: "強い絆と、向上心を併せ持ちます。二人で困難を乗り越え、理想の家庭や未来を築くリーダーです。" },
-        "UPCD": { name: "完全なる調和", catch: "愛の最終形態", desc: "融合と自律、情熱と冷静のバランスが取れています。マズローの自己実現に最も近い、成熟した愛の形です。" }
-    };
-
-    // 変数
     let currentQ = 0;
-    // スコア: 左側(A,S,R,I)と右側(U,P,C,D)のポイント
-    let scores = {
-        1: { left: 0, right: 0, labelL: "孤高(A)", labelR: "融合(U)" },
-        2: { left: 0, right: 0, labelL: "本能(S)", labelR: "理知(P)" },
-        3: { left: 0, right: 0, labelL: "受容(R)", labelR: "創造(C)" },
-        4: { left: 0, right: 0, labelL: "没入(I)", labelR: "超越(D)" }
-    };
+    let scores = { 1:{L:0, R:0}, 2:{L:0, R:0}, 3:{L:0, R:0}, 4:{L:0, R:0} };
 
-    // 初期化
-    function start() {
-        // 質問をシャッフル（軸がバレないように）
-        shuffle(questions);
-        document.getElementById('start-screen').classList.add('hidden');
-        document.getElementById('quiz-screen').classList.remove('hidden');
-        showQ();
-    }
-
-    // シャッフル関数
-    function shuffle(array) {
-        for (let i = array.length - 1; i > 0; i--) {
+    // スタート処理
+    function startDiagnosis() {
+        // シャッフル
+        for (let i = questions.length - 1; i > 0; i--) {
             const j = Math.floor(Math.random() * (i + 1));
-            [array[i], array[j]] = [array[j], array[i]];
+            [questions[i], questions[j]] = [questions[j], questions[i]];
         }
+        
+        const startScreen = document.getElementById('start-screen');
+        startScreen.classList.add('fade-out');
+        setTimeout(() => {
+            startScreen.classList.add('hidden');
+            const quizScreen = document.getElementById('quiz-screen');
+            quizScreen.classList.remove('hidden');
+            quizScreen.classList.add('fade-in');
+            showQ();
+        }, 500);
     }
 
     // 質問表示
     function showQ() {
         const q = questions[currentQ];
-        document.getElementById('question-text').textContent = q.t;
-        document.getElementById('progress-text').textContent = `Q. ${currentQ + 1} / ${questions.length}`;
-        document.getElementById('progress-bar').style.width = `${((currentQ) / questions.length) * 100}%`;
+        const t = document.getElementById('q-text');
+        
+        // テキスト切り替えアニメーション
+        t.style.opacity = 0;
+        setTimeout(() => {
+            t.textContent = q.t;
+            t.style.opacity = 1;
+        }, 200);
 
-        const container = document.getElementById('options-container');
-        container.innerHTML = '';
+        document.getElementById('q-curr').textContent = currentQ + 1;
+        document.getElementById('progress-bar').style.width = `${((currentQ)/questions.length)*100}%`;
 
-        // 選択肢の表示テキストを整形 (最後の(A)などは削除して表示)
-        const txtA = q.options[0].replace(/\([A-Z]\)$/, "");
-        const txtB = q.options[1].replace(/\([A-Z]\)$/, "");
-
-        // 4つのボタンを生成
-        // 軸の左側(A/S/R/I)に加点するか、右側(U/P/C/D)に加点するか
-        createBtn(container, txtA, q.axis, 'left', 3); // 強く左
-        createBtn(container, "どちらかといえば: " + txtA, q.axis, 'left', 1, true); // 弱く左
-        createBtn(container, "どちらかといえば: " + txtB, q.axis, 'right', 1, true); // 弱く右
-        createBtn(container, txtB, q.axis, 'right', 3); // 強く右
+        const area = document.getElementById('options-area');
+        area.innerHTML = '';
+        
+        // 4択ボタン生成 (A強, A弱, B弱, B強)
+        createBtn(area, q.options[0], q.axis, 'L', 3, "強くそう思う");
+        createBtn(area, q.options[0], q.axis, 'L', 1, "どちらかといえば");
+        createBtn(area, q.options[1], q.axis, 'R', 1, "どちらかといえば");
+        createBtn(area, q.options[1], q.axis, 'R', 3, "強くそう思う");
     }
 
-    function createBtn(container, text, axis, side, point, isSmall = false) {
+    function createBtn(parent, text, axis, side, point, label) {
         const btn = document.createElement('button');
-        btn.className = isSmall ? 'btn btn-small' : 'btn';
-        btn.textContent = text;
-        btn.onclick = () => answer(axis, side, point);
-        container.appendChild(btn);
+        btn.className = 'btn option-btn';
+        btn.innerHTML = `<span class="btn-label">${label}</span>${text}`;
+        btn.onclick = () => {
+            scores[axis][side] += point;
+            next();
+        };
+        parent.appendChild(btn);
     }
 
-    // 回答処理
-    function answer(axis, side, point) {
-        scores[axis][side] += point;
+    function next() {
         currentQ++;
         if (currentQ < questions.length) {
             showQ();
         } else {
-            showResult();
+            showLoading();
         }
     }
 
-    // 結果計算・表示
-    function showResult() {
-        document.getElementById('quiz-screen').classList.add('hidden');
-        document.getElementById('result-screen').classList.remove('hidden');
+    function showLoading() {
+        const quizScreen = document.getElementById('quiz-screen');
+        quizScreen.classList.add('hidden');
+        const loadingScreen = document.getElementById('loading-screen');
+        loadingScreen.classList.remove('hidden');
+        loadingScreen.classList.add('fade-in');
+
+        const texts = [
+            "距離感を測定中...", 
+            "行動原理を解析中...", 
+            "現実認識をスキャン中...", 
+            "世界観を特定中...",
+            "魂の形を描画中..."
+        ];
+        let i = 0;
+        const interval = setInterval(() => {
+            document.getElementById('loader-text').textContent = texts[i];
+            i++;
+            if (i >= texts.length) {
+                clearInterval(interval);
+                setTimeout(calcResult, 800);
+            }
+        }, 800);
+    }
+
+    function calcResult() {
+        document.getElementById('loading-screen').classList.add('hidden');
+        const resScreen = document.getElementById('result-screen');
+        resScreen.classList.remove('hidden');
+        resScreen.classList.add('fade-in');
 
         // タイプ判定
         let typeKey = "";
-        let totalScore = 0; // 精神年齢計算用
+        typeKey += (scores[1].L >= scores[1].R) ? "A" : "U";
+        typeKey += (scores[2].L >= scores[2].R) ? "S" : "P";
+        typeKey += (scores[3].L >= scores[3].R) ? "R" : "C";
+        typeKey += (scores[4].L >= scores[4].R) ? "I" : "D";
+
+        // 精神年齢計算
+        let raw = 0;
+        for(let k=1; k<=4; k++) raw += Math.max(scores[k].L, scores[k].R);
+        let bonus = 0;
+        if(scores[1].L > scores[1].R) bonus += 5; 
+        if(scores[2].R > scores[2].L) bonus += 5; 
+        if(scores[3].L > scores[3].R) bonus += 5; 
+        if(scores[4].R > scores[4].L) bonus += 5; 
         
-        // 軸1
-        typeKey += (scores[1].left >= scores[1].right) ? "A" : "U";
-        // 軸2
-        typeKey += (scores[2].left >= scores[2].right) ? "S" : "P";
-        // 軸3
-        typeKey += (scores[3].left >= scores[3].right) ? "R" : "C";
-        // 軸4
-        typeKey += (scores[4].left >= scores[4].right) ? "I" : "D";
+        let age = Math.floor( ((raw + bonus) / 140) * 100 );
+        if(age < 5) age = 5;
 
-        // 精神年齢(Lv)の計算ロジック
-        // マズローの自己実現的要素（孤高、理知、受容、超越）が高いと加点されるが、
-        // 「融合」や「没入」も悪ではないため、バランスを見る。
-        // ここでは単純に「各軸の勝った方のスコアの合計」をベースに、
-        // マズロー的な「A, P, R, D」が含まれるとボーナス、という計算にする。
-        
-        // 基本点（回答の強さ）
-        let rawPower = 0; 
-        for(let i=1; i<=4; i++) rawPower += Math.max(scores[i].left, scores[i].right);
-        // rawPowerは Max 30 * 4 = 120点
+        const res = types[typeKey];
+        document.getElementById('result-name').textContent = res.name;
+        document.getElementById('result-catch').textContent = res.catch;
+        document.getElementById('result-desc').innerHTML = res.desc;
+        document.getElementById('level-val').textContent = age;
 
-        // マズローボーナス（哲学的要素）
-        let maturityBonus = 0;
-        if(scores[1].left > scores[1].right) maturityBonus += 5; // A:自律
-        if(scores[2].right > scores[2].left) maturityBonus += 5; // P:誠実
-        if(scores[3].left > scores[3].right) maturityBonus += 5; // R:受容
-        if(scores[4].right > scores[4].left) maturityBonus += 5; // D:超越
-        
-        // 年齢換算 (0〜100歳)
-        // 120点満点 + ボーナス20点 = 140点満点
-        // これを 100歳スケールにマッピング
-        let mentalAge = Math.floor( ((rawPower + maturityBonus) / 140) * 100 );
-        if(mentalAge < 10) mentalAge = 12; // 最低年齢
-
-        // 表示反映
-        const res = types[typeKey] || types["USRI"]; // fallback
-        document.getElementById('type-name').textContent = res.name;
-        document.getElementById('type-catch').textContent = res.catch;
-        document.getElementById('level-val').textContent = mentalAge;
-
-        // 詳細説明の生成
-        const details = `
-            <div class="axis-desc">
-                <span class="axis-title">■ 距離感: ${scores[1].left >= scores[1].right ? "孤高 (Autonomy)" : "融合 (Union)"}</span>
-                ${scores[1].left >= scores[1].right 
-                    ? "一人の時間を大切にし、精神的に自立しています。相手に依存せず、対等な関係を築けます。" 
-                    : "深い繋がりを何より重視します。喜びも悲しみも共有し、二人三脚で歩むことを望みます。"}
-            </div>
-            <div class="axis-desc">
-                <span class="axis-title">■ 行動原理: ${scores[2].left >= scores[2].right ? "本能 (Spontaneity)" : "理知 (Principle)"}</span>
-                ${scores[2].left >= scores[2].right 
-                    ? "自分の直感と感情に正直です。駆け引きのない、ピュアで情熱的な行動を取ります。" 
-                    : "誠実さと責任感を重視します。一時の感情に流されず、約束を守り抜く意志の強さがあります。"}
-            </div>
-            <div class="axis-desc">
-                <span class="axis-title">■ 現実認識: ${scores[3].left >= scores[3].right ? "受容 (Realist)" : "創造 (Creator)"}</span>
-                ${scores[3].left >= scores[3].right 
-                    ? "相手の欠点も含めて愛せる包容力があります。現実を否定せず、あるがままを肯定します。" 
-                    : "より良い関係を築くために工夫を惜しみません。トラブルも成長の糧にするポジティブさがあります。"}
-            </div>
-            <div class="axis-desc">
-                <span class="axis-title">■ 世界観: ${scores[4].left >= scores[4].right ? "没入 (Immersion)" : "超越 (Detachment)"}</span>
-                ${scores[4].left >= scores[4].right 
-                    ? "「今ここ」を全力で楽しみます。ドラマの主人公のように、彩り豊かな人生を送ります。" 
-                    : "一歩引いた視点を持っています。トラブルも笑い飛ばせる、哲学的な強さと余裕があります。"}
-            </div>
-            <div style="margin-top:20px; color:#ccc;">
-                ${res.desc}
-            </div>
-        `;
-        document.getElementById('result-detail').innerHTML = details;
-
-        // チャート描画
         drawChart();
     }
 
     function drawChart() {
         const ctx = document.getElementById('radarChart').getContext('2d');
-        // 各軸のスコアを比率に変換 (左:0 〜 右:100 のようなイメージではなく、各成分の絶対値で出す)
-        // 今回は「左の成分」と「右の成分」を比較するレーダーにするため、
-        // 8角形（A, U, S, P, R, C, I, D）で表示するのが面白い。
-        
+        // カラー: ゴールド
+        const color = '#C5A059';
+        const bg = 'rgba(197, 160, 89, 0.2)';
+
         new Chart(ctx, {
             type: 'radar',
             data: {
-                labels: [
-                    '孤高(A)', '本能(S)', '受容(R)', '没入(I)', 
-                    '融合(U)', '理知(P)', '創造(C)', '超越(D)'
-                ],
+                labels: ['孤高', '本能', '受容', '没入', '融合', '理知', '創造', '超越'],
                 datasets: [{
-                    label: 'あなたの愛の哲学',
+                    label: 'Score',
                     data: [
-                        scores[1].left, scores[2].left, scores[3].left, scores[4].left,
-                        scores[1].right, scores[2].right, scores[3].right, scores[4].right
+                        scores[1].L, scores[2].L, scores[3].L, scores[4].L,
+                        scores[1].R, scores[2].R, scores[3].R, scores[4].R
                     ],
-                    backgroundColor: 'rgba(212, 175, 55, 0.2)', // Gold
-                    borderColor: 'rgba(212, 175, 55, 1)',
+                    backgroundColor: bg,
+                    borderColor: color,
+                    borderWidth: 1.5,
                     pointBackgroundColor: '#fff',
-                    borderWidth: 2
+                    pointBorderColor: color
                 }]
             },
             options: {
                 scales: {
                     r: {
-                        angleLines: { color: '#444' },
-                        grid: { color: '#333' },
-                        pointLabels: { color: '#e0e0e0', font: { size: 12 } },
+                        angleLines: { color: 'rgba(0,0,0,0.05)' },
+                        grid: { color: 'rgba(0,0,0,0.05)' },
+                        pointLabels: { 
+                            font: { family: "'Shippori Mincho', serif", size: 11 },
+                            color: '#666'
+                        },
                         suggestedMin: 0,
-                        suggestedMax: 30 // 1軸あたり10問×3点 = 30点満点
+                        suggestedMax: 30,
+                        ticks: { display: false }
                     }
                 },
-                plugins: {
-                    legend: { display: false }
-                }
+                plugins: { legend: { display: false } }
             }
         });
+    }
+
+    function shareX() {
+        const name = document.getElementById('result-name').textContent;
+        const catchCopy = document.getElementById('result-catch').textContent;
+        const age = document.getElementById('level-val').textContent;
+        const text = `私の愛の哲学タイプは...%0a【${name}】%0a"${catchCopy}"%0a精神年齢: ${age}歳%0a%0a#愛の哲学診断 #LovePhilosophy%0a`;
+        const url = window.location.href;
+        window.open(`https://twitter.com/intent/tweet?text=${text}&url=${url}`, '_blank');
     }
 </script>
 </body>
